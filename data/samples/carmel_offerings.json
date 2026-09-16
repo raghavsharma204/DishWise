@@ -1,0 +1,89 @@
+{
+  "audit_date_utc": "2026-09-16T20:22:00Z",
+  "status": "reviewed_factual_sample_not_launch_catalog",
+  "coverage": "Central Carmel: Midtown and Arts & Design District",
+  "attribution": "Restaurant OSM metadata: © OpenStreetMap contributors, ODbL 1.0; https://www.openstreetmap.org/copyright",
+  "restaurants_audited": [
+    {"id": "fork-ale-house", "osm_type": "node", "osm_id": 10085774350},
+    {"id": "woodys-library", "osm_type": "way", "osm_id": 1101349116},
+    {"id": "josephine", "osm_type": null, "osm_id": null}
+  ],
+  "offerings": [
+    {
+      "id": "woodys-library:chicken-caesar",
+      "restaurant_id": "woodys-library",
+      "name": "Chicken Caesar",
+      "description": null,
+      "price": {"amount": 15.55, "currency": "USD"},
+      "price_variants": [],
+      "attributes": [],
+      "source_url": "https://www.woodyscarmel.com/uploads/7/8/3/2/7832588/woodys_menu_web_25242.pdf",
+      "verified_at_utc": "2026-09-16T20:33:28Z",
+      "provenance": {"name": "sourced", "price": "sourced"}
+    },
+    {
+      "id": "woodys-library:veggie-stir-fry",
+      "restaurant_id": "woodys-library",
+      "name": "Veggie Stir Fry",
+      "description": null,
+      "price": {"amount": 18.95, "currency": "USD"},
+      "price_variants": [],
+      "attributes": [],
+      "source_url": "https://www.woodyscarmel.com/uploads/7/8/3/2/7832588/woodys_menu_web_25242.pdf",
+      "verified_at_utc": "2026-09-16T20:33:28Z",
+      "provenance": {"name": "sourced", "price": "sourced"}
+    },
+    {
+      "id": "woodys-library:smashed-burgers",
+      "restaurant_id": "woodys-library",
+      "name": "Smashed Burgers",
+      "description": null,
+      "price": {"amount": 15.95, "currency": "USD"},
+      "price_variants": [],
+      "attributes": [],
+      "source_url": "https://www.woodyscarmel.com/uploads/7/8/3/2/7832588/woodys_menu_web_25242.pdf",
+      "verified_at_utc": "2026-09-16T20:33:28Z",
+      "provenance": {"name": "sourced", "price": "sourced"}
+    },
+    {
+      "id": "josephine:coq-au-vin",
+      "restaurant_id": "josephine",
+      "name": "Coq-Au-Vin",
+      "description": null,
+      "price": {"amount": 32, "currency": "USD"},
+      "price_variants": [],
+      "attributes": [],
+      "source_url": "https://www.josephinecarmel.com/menu",
+      "verified_at_utc": "2026-09-16T20:33:28Z",
+      "provenance": {"name": "sourced", "price": "sourced"}
+    },
+    {
+      "id": "josephine:mushroom-ravioli",
+      "restaurant_id": "josephine",
+      "name": "Mushroom Ravioli",
+      "description": null,
+      "price": {"amount": 27, "currency": "USD"},
+      "price_variants": [],
+      "attributes": [],
+      "source_url": "https://www.josephinecarmel.com/menu",
+      "verified_at_utc": "2026-09-16T20:33:28Z",
+      "provenance": {"name": "sourced", "price": "sourced"}
+    },
+    {
+      "id": "josephine:french-bistro-salad",
+      "restaurant_id": "josephine",
+      "name": "French Bistro Salad",
+      "description": null,
+      "price": null,
+      "price_variants": [
+        {"label": "Small", "amount": 8, "currency": "USD", "provenance": "sourced"},
+        {"label": "Entree", "amount": 14, "currency": "USD", "provenance": "sourced"}
+      ],
+      "attributes": [],
+      "source_url": "https://www.josephinecarmel.com/menu",
+      "verified_at_utc": "2026-09-16T20:33:28Z",
+      "provenance": {"name": "sourced", "price": "unknown"}
+    }
+  ],
+  "note": "Small manually reviewed sample of menu names and prices only. Descriptions and attributes were deliberately not copied or inferred. The public launch target remains five reviewed restaurants and 25 offerings."
+}
