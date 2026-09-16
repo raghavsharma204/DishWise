@@ -4,16 +4,16 @@
 
 ## Current and next work
 
-**Current:** Setup A is complete. Its reviewed six-offering sample and first-experience decisions are recorded; dedicated Google/Supabase account-level setup succeeded without a card. Public OAuth publication and real sign-in remain unverified.
+**Current:** Setup B — Local application setup is complete. A local Next.js page checks FastAPI health, and a disposable local Supabase PostgreSQL connection was verified. No product feature or deployment is complete.
 
-**Next:** Setup B — Local application setup. Setup C separately verifies free hosting and public OAuth prerequisites. **First product feature:** Spec 01 — Display stored dish cards.
+**Next ready work:** Setup C — Free-hosting verification, or Spec 01 — Display stored dish cards. Their explicit dependencies determine execution order. Public OAuth publication and real sign-in remain unverified.
 
 This revision replaces the previous 21-spec roadmap with the 31 single-feature specs approved in conversation. These are the authoritative feature IDs; product acceptance-criterion numbers are separate. Resolve historical references through the migration table below. Do not reset completed setup work.
 
 | ID | Feature / task | Status |
 |---|---|---|
 | Setup A | Validate catalog and decide the first experience | Complete: account-level no-card OAuth verified; public sign-in remains a later gate |
-| Setup B | Local application setup | Not started |
+| Setup B | Local application setup | Complete: local health flow and disposable database verified |
 | Setup C | Free-hosting verification | Not started |
 | Spec 01 | Display stored dish cards | Not started |
 | Spec 02 | Open restaurant information | Not started |
@@ -77,6 +77,8 @@ This revision replaces the previous 21-spec roadmap with the 31 single-feature s
 
 ## Setup B — Local application setup
 
+**Status:** Complete. The local health flow and disposable database workflow are specified and verified in `.codex/specs/setup-b-local-application-setup.md` and `README.md`.
+
 **Depends on:** Setup A.
 
 **Result:** Next.js calls a FastAPI health endpoint locally, and a disposable local Supabase test database can be used.
@@ -86,6 +88,8 @@ This revision replaces the previous 21-spec roadmap with the 31 single-feature s
 **Acceptance criteria:** Separate frontend/backend roots, reproducible install/start/build/test commands, placeholder environment examples, successful and unavailable health states. Establish the local database test workflow without future feature tables. Keep model/scraping dependencies outside the API.
 
 **Tests:** Health smoke test, frontend build/typecheck, browser-to-API call and failure state, and local database connection check.
+
+**Verification (2026-09-16):** `uv run --locked pytest` passed 2 tests; `npm run typecheck` and `npm run build` passed. Browser checks at 1280×800 and 1440×900 showed no horizontal overflow. Healthy, stopped-backend, 404, malformed-JSON, timeout, and retry recovery states were observed. `npm ci` succeeded in root and frontend, and `uv sync --locked` succeeded in backend. `npm run db:start` started only local PostgreSQL; `npm run db:status` showed `linked_project:null` and a loopback DB URL; a local `SELECT 1` returned `1`; `npm run db:stop` stopped it. `/health` still returned `{"status":"ok"}` with the database stopped. No feature tables or public deployment were created.
 
 ## Setup C — Free-hosting verification
 

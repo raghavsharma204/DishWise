@@ -1,0 +1,76 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+
+type HealthState = "checking" | "healthy" | "unavailable";
+
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
+
+export default function Home() {
+  const [health, setHealth] = useState<HealthState>("checking");
+  const [attempt, setAttempt] = useState(0);
+
+  const checkHealth = useCallback(async (signal: AbortSignal) => {
+    setHealth("checking");
+    try {
+      const response = await fetch(`${apiBaseUrl}/health`, {
+        cache: "no-store",
+        signal,
+      });
+      if (!response.ok) throw new Error("Health request failed");
+      const body: unknown = await response.json();
+      if (
+        typeof body !== "object" ||
+        body === null ||
+        !("status" in body) ||
+        body.status !== "ok"
+      ) {
+        throw new Error("Invalid health response");
+      }
+      if (!signal.aborted) setHealth("healthy");
+    } catch {
+      if (!signal.aborted) setHealth("unavailable");
+    }
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => {
+      setHealth("unavailable");
+      controller.abort();
+    }, 3000);
+    void checkHealth(controller.signal).finally(() => window.clearTimeout(timeout));
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [attempt, checkHealth]);
+
+  return (
+    <main className="min-h-screen bg-slate-50 px-6 py-16 text-slate-900">
+      <div className="mx-auto max-w-2xl">
+        <p className="text-sm font-semibold uppercase tracking-widest text-slate-500">Local setup</p>
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight">DishWise</h1>
+        <p className="mt-4 text-lg text-slate-600">
+          This page checks the local API connection. Dish recommendations are not available yet.
+        </p>
+        <section className="mt-10 rounded-xl border border-slate-200 bg-white p-7 shadow-sm" aria-labelledby="api-heading">
+          <h2 id="api-heading" className="text-xl font-semibold">API connection</h2>
+          <p role="status" aria-live="polite" className="mt-3 text-slate-700">
+            {health === "checking" && "Checking the local API…"}
+            {health === "healthy" && "Local API is responding."}
+            {health === "unavailable" && "Local API is unavailable. Check that the backend is running, then retry."}
+          </p>
+          <button
+            className="mt-6 rounded-md bg-slate-900 px-4 py-2 font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-50"
+            type="button"
+            disabled={health === "checking"}
+            onClick={() => setAttempt((value) => value + 1)}
+          >
+            Retry check
+          </button>
+        </section>
+      </div>
+    </main>
+  );
+}

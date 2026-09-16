@@ -2,7 +2,7 @@
 
 ## Project state
 
-- This repository has no application implementation yet. Setup A is complete with a reviewed factual sample and account-level Google/Supabase no-card configuration; public OAuth publication, real sign-in, application hosting, and the launch catalog remain unverified. Inspect the tracker and recorded evidence rather than assuming code, migrations, deployments, or runnable commands exist.
+- Setup A is complete, and Setup B provides a local frontend, backend health check, and disposable database workflow. No product feature, catalog schema, public hosting, or real sign-in is implemented yet. Public OAuth publication and the launch catalog remain unverified. Inspect the tracker and recorded evidence before claiming feature or deployment readiness.
 - Treat [PROJECT_SPEC.md](PROJECT_SPEC.md) as the product and acceptance authority, [ARCHITECTURE.md](ARCHITECTURE.md) as the current architecture proposal, and [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) as the numbered feature-spec roadmap, progress tracker, and testing guide.
 - Use [brainstorm.md](brainstorm.md) for future ideas and product context, not as a source of committed V1 requirements.
 - When a plan conflicts with an implementation decision, record the decision and update the relevant documentation rather than silently choosing a default.
@@ -45,5 +45,5 @@
 - For each feature, follow this loop: define behavior, add deterministic fixtures, implement the backend logic, add focused tests, connect the UI, manually verify the flow, and commit the completed slice.
 - Keep catalog ingestion, recommendation eligibility/ranking, API transport, and presentation independently testable.
 - Add or update behavior-focused tests with each implemented feature spec. Prefer small, meaningful tests over snapshots.
-- Keep documentation, dependency lockfiles, environment examples, and reproducible commands synchronized as implementation begins. Since none exist yet, discover and document the actual commands when the first project structure is created.
+- Keep documentation, dependency lockfiles, environment examples, and reproducible commands synchronized as implementation proceeds. The local Setup B commands are recorded in README.md; verify later commands when their feature structure is created.
 - Treat release verification as a checklist, not a numbered product feature. Before public product release, verify complete guest/returning flows, stored-catalog behavior with sources/operator machine offline, user isolation, desktop accessibility, second-city configuration without ranking changes, public OAuth, and the five-restaurant/25-offering catalog gate. Record measured latency and pilot evidence separately from targets; unmet required criteria remain incomplete.

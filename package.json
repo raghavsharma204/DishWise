@@ -1,0 +1,12 @@
+{
+  "name": "dish-rec-local-tools",
+  "private": true,
+  "scripts": {
+    "db:start": "supabase db start",
+    "db:status": "supabase status",
+    "db:stop": "supabase stop"
+  },
+  "devDependencies": {
+    "supabase": "^2.117.0"
+  }
+}

@@ -1,0 +1,9 @@
+# Disposable local database for development and tests. No hosted project is linked.
+project_id = "dish-rec"
+
+[db]
+port = 54322
+major_version = 17
+
+[db.seed]
+enabled = false
