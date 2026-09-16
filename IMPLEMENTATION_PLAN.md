@@ -1,6 +1,6 @@
 # Single-feature Implementation Plan
 
-[PROJECT_SPEC.md](PROJECT_SPEC.md) defines product requirements, [ARCHITECTURE.md](ARCHITECTURE.md) proposes the architecture, and [docs/decisions.md](docs/decisions.md) records accepted choices. This roadmap defines independently reviewable implementation units and tracks progress. No application implementation has started.
+[PROJECT_SPEC.md](PROJECT_SPEC.md) defines product requirements, [ARCHITECTURE.md](ARCHITECTURE.md) proposes the architecture, and [docs/decisions.md](docs/decisions.md) records accepted choices. This roadmap defines independently reviewable implementation units and tracks progress. Setup B local application infrastructure is implemented; numbered product features have not started.
 
 ## Current and next work
 
@@ -8,7 +8,7 @@
 
 **Next ready work:** Setup C — Free-hosting verification, or Spec 01 — Display stored dish cards. Their explicit dependencies determine execution order. Public OAuth publication and real sign-in remain unverified.
 
-This revision replaces the previous 21-spec roadmap with the 31 single-feature specs approved in conversation. These are the authoritative feature IDs; product acceptance-criterion numbers are separate. Resolve historical references through the migration table below. Do not reset completed setup work.
+This revision replaces the previous 21-spec roadmap with the 31 single-feature specs approved in conversation. These are the authoritative feature IDs; product acceptance-criterion numbers are separate. Setup B now has a local application implementation; the numbered product features and public deployment remain unstarted. Resolve historical references through the migration table below. Do not reset completed setup work.
 
 | ID | Feature / task | Status |
 |---|---|---|
