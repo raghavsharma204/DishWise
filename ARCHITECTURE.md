@@ -1,6 +1,6 @@
 # MVP Architecture Proposal
 
-Status: Proposed architecture; no implementation decision or deployment has been executed.
+Status: Proposed architecture with Setup A complete and decisions in `docs/decisions.md`; no application implementation or deployment has been executed. Account-level Google/Supabase OAuth setup succeeded without a card, while public publication and sign-in remain unverified. The reviewed factual sample is below the public launch catalog gate.
 
 Launch region: Carmel, Indiana. This proposal follows PROJECT_SPEC.md and preserves the ability to add cities through data and configuration.
 
@@ -31,7 +31,7 @@ React manages interactive controls; Next.js organizes pages and builds the appli
 
 The browser collects the craving and location, displays results, and sends feedback to FastAPI. Keep recommendation decisions in the backend so the same rules can eventually serve a mobile interface. V1 targets desktop and laptop screens only.
 
-For location, start with a **selector for areas within Carmel and optional browser geolocation**. Store coordinates for selectable areas. This avoids an address-search API and its limits. Label area-based distances as approximate, and link to restaurant locations externally instead of building an interactive map. Exact coverage areas remain to be selected.
+For location, use **Midtown and Arts & Design District presets** with approximate reference points. The default radius is 3 miles, with 1- and 5-mile choices, applied only to the curated central Carmel catalog and configured coverage. Browser geolocation and address search are unnecessary for V1. Confirm exact preset coordinates in Spec 02. Label area-based distances approximate and link to restaurant locations externally.
 
 ## Backend
 
@@ -41,7 +41,7 @@ A recommendation request would:
 
 1. Interpret supported craving terms, including negation such as “not spicy.”
 2. Load the user's preferences and eligible nearby dishes.
-3. Apply dietary restrictions and other hard constraints.
+3. Apply supported hard constraints, including configured coverage. V1 has no dietary filter.
 4. Score the remaining dishes using taste, craving, price, distance, and novelty.
 5. Return 3–5 dishes with explanations based on their strongest scoring factors.
 
@@ -78,7 +78,7 @@ Start with these logical tables:
 | Saved dishes | Independent saved status |
 | Recommendation sets and events | Recently shown results and bounded interaction history |
 
-Keep dietary restrictions separate from learned preferences so clicking a dish cannot silently change a restriction.
+Keep hard constraints separate from learned preferences so feedback cannot silently change eligibility. V1 has no dietary restriction input; a later dietary feature needs its own evidence policy.
 
 **pgvector** adds support for embeddings: lists of numbers representing similarity between dish descriptions. They belong in the same database; a separate vector database is unnecessary.
 
@@ -104,9 +104,9 @@ A general-purpose menu crawler is unnecessary for V1. A small, reviewed catalog 
 
 Use Supabase Auth with **one social login provider**. OAuth means the provider handles sign-in and Supabase establishes the app session; the application does not collect that provider's password.
 
-For the target audience, Google sign-in is the proposed choice. GitHub is an alternative for a developer-focused demo, but introduces friction for typical students and diners. Supabase supports both. This is separate from using Google Maps. [Google integration](https://supabase.com/docs/guides/auth/social-login/auth-google), [GitHub integration](https://supabase.com/docs/guides/auth/social-login/auth-github)
+Google sign-in is the selected target. A dedicated Google project without billing and a Supabase Free project have an OAuth web client and enabled Google provider. The External Google app remains in Testing; public publication needs an app homepage, privacy policy, final origins, and an eligibility check in Setup B. A real sign-in and callback remain for Spec 08. This is separate from Google Maps. [Google integration](https://supabase.com/docs/guides/auth/social-login/auth-google), [Google branding requirements](https://support.google.com/cloud/answer/15549049?hl=en)
 
-Allow the first recommendations using temporary onboarding answers. Ask users to sign in when they want to preserve their profile or feedback, then save those answers to their account. This preserves the brainstorm's immediate-value experience without implementing anonymous-account merging. The provider and login timing remain proposals pending a final decision.
+Allow the first recommendations using temporary onboarding answers. Ask users to sign in when they want to preserve their profile or feedback, then save those answers to their account without overwriting an existing returning profile. No anonymous account merging is needed. Guest-first timing is an accepted product decision.
 
 Avoid email/password and magic-link authentication initially: public email delivery adds another service to configure, and Supabase's default email service only sends to preauthorized team addresses. [Supabase email restrictions](https://supabase.com/docs/guides/auth/auth-smtp)
 
@@ -124,7 +124,7 @@ The public recommendation flow must work while the local processing machine is o
 - **Secrets:** Keep privileged Supabase credentials and OAuth secrets out of browser code and Git. Public Supabase keys are only appropriate with correctly configured access policies.
 - **Untrusted content:** Display menu text as text, validate external links, and restrict the importer to reviewed public sources. Never expose an unrestricted “fetch this URL” endpoint.
 - **Abuse and privacy:** Limit request size and frequency, bound interaction retention, and avoid logging tokens or precise location histories.
-- **Food information:** Treat inferred ingredients as uncertain. Hard dietary filtering needs an explicit unknown-data policy; inferred attributes cannot establish allergy safety.
+- **Food information:** Treat inferred ingredients as uncertain and make no allergy-safety claims. Dietary filters are outside V1; a later feature would require an explicit evidence and unknown-data policy.
 
 Because the frontend and API have separate URLs, configure **CORS**, the browser's cross-origin access rules, to allow the intended frontend. CORS complements authentication; it does not replace it.
 
@@ -156,4 +156,4 @@ Choose **Option 1**, subject to a small FastAPI deployment check before building
 
 Choose Option 2 if conventional Python hosting becomes materially easier for the dependencies and its wake-up delay is acceptable.
 
-The first technical uncertainty to resolve is menu coverage and quality in Carmel. Better hosting cannot compensate for missing or unreliable dish data. Coverage boundaries, initial catalog size, authentication provider, dietary-data policy, and ranking weights remain open decisions in PROJECT_SPEC.md.
+The first technical uncertainty is obtaining enough reviewed central Carmel offerings. The current factual sample has six offerings from two restaurants; the launch target is five restaurants and 25 reviewed offerings, with a 30-day reverification policy. Provider account eligibility, hosting feasibility, and later ranking weights remain open checks in `PROJECT_SPEC.md` and `docs/decisions.md`.

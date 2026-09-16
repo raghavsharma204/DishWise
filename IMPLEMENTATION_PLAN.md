@@ -1,329 +1,548 @@
-# Feature-by-feature Implementation Plan
+# Single-feature Implementation Plan
 
-[PROJECT_SPEC.md](PROJECT_SPEC.md) defines product requirements; [ARCHITECTURE.md](ARCHITECTURE.md) proposes the architecture. This file defines the implementation tasks and tracks progress. No application implementation has started.
+[PROJECT_SPEC.md](PROJECT_SPEC.md) defines product requirements, [ARCHITECTURE.md](ARCHITECTURE.md) proposes the architecture, and [docs/decisions.md](docs/decisions.md) records accepted choices. This roadmap defines independently reviewable implementation units and tracks progress. No application implementation has started.
 
 ## Current and next work
 
-**Current:** Not started. **Next:** Setup A. **First coding feature after setup:** Spec 01 — Display stored dish cards.
+**Current:** Setup A is complete. Its reviewed six-offering sample and first-experience decisions are recorded; dedicated Google/Supabase account-level setup succeeded without a card. Public OAuth publication and real sign-in remain unverified.
 
-This revision replaces the earlier nine broad specs with 21 smaller implementation specs. IDs below are the new authoritative IDs; they are distinct from product acceptance-criterion numbers. Update this tracker when starting, completing, or blocking a task, with a short blocker/next-action note when needed. Work on one row at a time.
+**Next:** Setup B — Local application setup. Setup C separately verifies free hosting and public OAuth prerequisites. **First product feature:** Spec 01 — Display stored dish cards.
+
+This revision replaces the previous 21-spec roadmap with the 31 single-feature specs approved in conversation. These are the authoritative feature IDs; product acceptance-criterion numbers are separate. Resolve historical references through the migration table below. Do not reset completed setup work.
 
 | ID | Feature / task | Status |
 |---|---|---|
-| Setup A | Validate catalog and decide the first experience | Not started |
-| Setup B | Runnable application and hosting check | Not started |
+| Setup A | Validate catalog and decide the first experience | Complete: account-level no-card OAuth verified; public sign-in remains a later gate |
+| Setup B | Local application setup | Not started |
+| Setup C | Free-hosting verification | Not started |
 | Spec 01 | Display stored dish cards | Not started |
-| Spec 02 | Choose a location and search radius | Not started |
-| Spec 03 | Complete taste-preference onboarding | Not started |
-| Spec 04 | Filter dishes by dietary and budget constraints | Not started |
-| Spec 05 | Enter a craving and correct its interpretation | Not started |
-| Spec 06 | Rank and show the first recommendation set | Not started |
-| Spec 07 | Request another recommendation set | Not started |
-| Spec 08 | Sign in and sign out | Not started |
-| Spec 09 | Save and restore the onboarding profile | Not started |
-| Spec 10 | Edit saved preferences | Not started |
-| Spec 11 | Like or dislike a dish | Not started |
-| Spec 12 | Save and unsave a dish | Not started |
-| Spec 13 | View your saved dishes | Not started |
-| Spec 14 | Remember recommendations across sessions | Not started |
-| Spec 15 | Learn a little from dish and restaurant opens | Not started |
-| Spec 16 | Import restaurant metadata | Not started |
-| Spec 17 | Import reviewed menu offerings | Not started |
-| Spec 18 | Refresh menus and handle withdrawn dishes | Not started |
-| Spec 19 | Enrich dish attributes locally | Not started |
-| Spec 20 | Add optional stored-vector dish similarity | Not started |
-| Spec 21 | Validate and release the demo | Not started |
+| Spec 02 | Open restaurant information | Not started |
+| Spec 03 | Select a Carmel location | Not started |
+| Spec 04 | Select a search radius | Not started |
+| Spec 05 | Complete taste onboarding | Not started |
+| Spec 06 | Exclude unavailable catalog offerings | Not started |
+| Spec 07 | Interpret a craving | Not started |
+| Spec 08 | Correct craving interpretation | Not started |
+| Spec 09 | Rank the first recommendation set | Not started |
+| Spec 10 | Explain a recommendation | Not started |
+| Spec 11 | Request another recommendation set | Not started |
+| Spec 12 | Sign in and sign out | Not started |
+| Spec 13 | Save and restore onboarding preferences | Not started |
+| Spec 14 | Edit saved preferences | Not started |
+| Spec 15 | Record dish feedback | Not started |
+| Spec 16 | Personalize from explicit feedback | Not started |
+| Spec 17 | Save and unsave a dish | Not started |
+| Spec 18 | View saved dishes | Not started |
+| Spec 19 | Personalize from saves | Not started |
+| Spec 20 | Remember previously shown recommendations | Not started |
+| Spec 21 | Record recommendation interactions | Not started |
+| Spec 22 | Personalize from dish and restaurant opens | Not started |
+| Spec 23 | Expire interaction history | Not started |
+| Spec 24 | Import restaurant metadata | Not started |
+| Spec 25 | Extract a menu into reviewable records | Not started |
+| Spec 26 | Import reviewed dish offerings | Not started |
+| Spec 27 | Refresh existing dish information | Not started |
+| Spec 28 | Mark a dish as withdrawn | Not started |
+| Spec 29 | Enrich dish attributes locally | Not started |
+| Spec 30 | Generate and store dish embeddings | Not started |
+| Spec 31 | Rank using stored dish similarity | Not started |
+| Release | Release verification checklist | Not started |
 
 ## Working agreement
 
-Each spec below is a task you can ask to implement by ID and name. Its visible result defines the stopping point. Add only its necessary data contract, backend behavior, focused tests, and UI or operator command. Early features use a local fixture view; Spec 06 joins them into the first full recommendation flow. This keeps individual tasks small without building broad backend/frontend layers in isolation.
+- One spec delivers one observable behavior. Include only the necessary data contract/fixture, backend, tests and smallest UI or operator command. File paths below are proposed, not claims that files exist.
+- State the ID and name when starting; update status on start, completion or blockage. Record evidence and the next action for incomplete work. Completion means criteria and tests pass and the result can be demonstrated.
+- Dependencies, not row order, determine readiness. Work on one spec at a time; do not pull unrelated future features into a slice. Imports can proceed without authentication or learning.
+- Preserve accepted decisions: curated Midtown/Arts & Design District coverage, approximate presets, default 3-mile radius with 1/3/5 choices, guest-first access, Google/Supabase auth, no dietary filters, price and supported cravings as soft preferences, 30-day freshness, and variants under one offering identity.
+- Resolve feature-specific open choices before dependent behavior. Distinguish speculative defaults from decisions and explain important architectural choices before implementing them.
+- Define behavior → add deterministic fixtures → implement/test data and backend behavior → connect presentation → manually verify → update docs/tracker → commit the completed slice.
+- Normal tests use synthetic/cached fixtures, controlled auth and controlled vectors. Label synthetic dishes. Live menus, Overpass, OAuth and local models get separate bounded smoke checks.
+- Use a disposable local database for destructive tests; never reset or use the public demo database for tests. Verify ownership through both API and direct database access.
+- Include security, safe links/text, input bounds, keyboard access, desktop layouts at 1280×800 and 1440×900, and loading/empty/error states with each affected feature. These are acceptance requirements, not separate product features.
+- Before public data/request endpoints are exposed, provide shared request limits across instances; in-memory-only counters are insufficient. Intermediate incomplete product screens stay local. Hosting checks expose only the minimal intended site/health surface.
+- Recording and learning are separate: Spec 15 records feedback and Spec 16 uses it; Spec 17 records saves and Spec 19 uses them. Earlier UI must not claim an unimplemented learning effect. Like/Dislike/switch/clear, save/unsave and sign-in/sign-out each remain a single state lifecycle.
+- Add relevant migrations, lockfiles, environment examples and reproducible commands only. No secrets, paid dependencies or mobile scope. Each feature is testable without later consumers; release requires full integration.
 
-- Before starting, resolve that feature’s open decisions in `docs/decisions.md` and synchronize the product spec/architecture. Proposals are not accepted defaults.
-- Define behavior → add deterministic fixtures → implement and test backend/data behavior → connect presentation → manually verify → update progress/docs → commit the completed feature.
-- Keep stable IDs if execution order changes. Dependencies below describe prerequisites; the tracker is the default execution order.
-- Use the proposed Next.js/FastAPI/Supabase stack, with ingestion/enrichment local. Keep catalog, eligibility/ranking, transport, and presentation independently testable.
-- Normal tests use synthetic/cached fixtures, controlled auth, and controlled vectors. Real menus, Overpass, OAuth, and local models get separate smoke checks. Synthetic menu data stays visibly labeled as fixtures.
-- Run destructive database tests only in a disposable local database. Never reset or use the public demo database for tests. Check ownership through direct database access and API routes.
-- Apply input bounds, safe rendering/links, secrets handling, and ownership controls with each feature. Before exposing any data/request endpoint publicly, provide shared request limits across instances; local-only intermediate screens must stay local until ready.
-- Check keyboard access, readable loading/errors, and representative 1280×800/1440×900 layouts as each UI feature is added. No mobile scope is introduced.
-- Add reproducible commands, lockfiles, environment examples, and relevant operations notes as implementation begins. Completion requires the feature’s checks and demo, not just files existing.
+## Setup A — Validate catalog and decide the first experience
 
-**Identity gate:** Setup A decides login timing. The default execution order is conditional on accepting guest-first access. If login is required first, execute Spec 08 after Setup B (its core auth implementation needs only setup), then implement Spec 09 after Spec 03 and before exposing personalized results. Update dependencies/tracker to reflect that decision. Do not silently adopt guest access or a particular provider.
+**Status:** Complete; preserve recorded evidence. **Depends on:** None.
 
-## Setup A — Validate the catalog and decide the first experience
+**Result:** Three audited restaurant candidates, six reviewed factual offerings from two menus and recorded first-experience decisions. Fork's third-party menu remains on hold. This sample does not meet the five-restaurant/25-offering release gate.
 
-**Product-spec references:** Required data; unresolved questions 1–7, 9–10; groundwork for acceptance criteria 5, 12, 15.
+**Likely files:** `docs/decisions.md`, `data/source_audit.csv`, `data/samples/carmel_offerings.json`, `PROJECT_SPEC.md`, `ARCHITECTURE.md`, existing `.codex/specs/setup-a-validate-catalog-first-experience.md`.
 
-**Result:** A reviewed sample of real Carmel offerings and enough recorded decisions to implement the first recommendation flow.
+**Acceptance criteria:** Source evidence, permitted factual reuse, unknowns, variants, coverage, freshness, guest-first flow, supported craving behavior, pilot and latency targets are recorded. Account-level Google/Supabase setup without a card is verified. Public publication and a real callback remain explicit gates in Setup C and Spec 12, not completed claims.
 
-**Scope and acceptance:**
+**Tests/review:** Manual source tracing and cold-start, no-dietary-control, conflicting-craving, sparse-catalog and location-fallback walkthroughs. No application test suite applies. Do not repeat completed auditing solely because feature IDs changed.
 
-- Audit a proposed sample of three restaurants: OSM metadata, menu URLs, access/reuse restrictions, formats, missing fields, and traceable sample names/prices/attributes.
-- Select coverage, minimum launch catalog, permitted manual-review fallback, freshness/withdrawal policy, and price-variant representation.
-- Decide supported dietary restrictions and qualifying evidence, including unknown-data handling. Inference cannot establish allergy safety.
-- Decide manual location input, radius behavior, and whether price is a preference or optional hard cap, including unknown prices under a cap.
-- Record a behavior table for supported cravings: “spicy and filling,” “chicken,” “surprise me,” negation, unsupported text, and conflicts with persistent preferences. Specify hard requirements versus ranking preferences and correction behavior. Dietary restrictions remain authoritative.
-- Decide login timing and a viable free/no-card authentication method. Guest-first access and preset Carmel areas are architecture proposals until accepted.
-- Set a small pilot/usefulness measure and numerical latency target, reporting cold starts separately. Record existing local hardware; select a model only when enrichment is implemented.
-- If usable permitted data is insufficient, record the coverage limitation and scope decision before proceeding to build a crawler.
-
-**Likely files:** `docs/decisions.md`, `data/source_audit.csv`, `data/samples/carmel_offerings.json`, `PROJECT_SPEC.md`, `ARCHITECTURE.md`.
-
-**Verification:** Trace the sample to its sources and walk through cold-start, restricted-diet, conflicting-craving, and sparse-catalog examples. No automated tests are needed for this documentation setup step.
-
-## Setup B — Establish a runnable application and verify hosting
+## Setup B — Local application setup
 
 **Depends on:** Setup A.
 
-**Product-spec references:** Technical/deployment constraints; groundwork for acceptance criterion 15.
+**Result:** Next.js calls a FastAPI health endpoint locally, and a disposable local Supabase test database can be used.
 
-**Result:** A minimal Next.js page calls a lightweight FastAPI health endpoint locally and on the candidate free host.
+**Likely files:** `frontend/package.json`, `frontend/app/page.tsx`, `frontend/app/layout.tsx`, `backend/pyproject.toml`, `backend/app/main.py`, `backend/tests/test_health.py`, `supabase/config.toml`, `.gitignore`, `.env.example`, `README.md`, relevant lockfiles.
 
-**Scope and acceptance:**
+**Acceptance criteria:** Separate frontend/backend roots, reproducible install/start/build/test commands, placeholder environment examples, successful and unavailable health states. Establish the local database test workflow without future feature tables. Keep model/scraping dependencies outside the API.
 
-- Create separate frontend/backend roots and reproducible install, start, build, and test commands. Configure dependency lockfiles, `.gitignore`, and environment examples without secrets.
-- Verify current provider limits, no-card account eligibility, and a minimal FastAPI deployment before committing to that host. Record any alternative and its tradeoffs.
-- Use provider-issued URLs and one deployment per component. Keep model and scraping dependencies out of the API.
-- Configure intended origins; show successful and unavailable health states. Do not log credentials or sensitive request data.
-- Establish the disposable local Supabase test workflow needed by the next feature; do not create future feature tables yet.
+**Tests:** Health smoke test, frontend build/typecheck, browser-to-API call and failure state, and local database connection check.
 
-**Likely files:** `frontend/`, `backend/app/main.py`, `backend/pyproject.toml`, `supabase/config.toml`, `.gitignore`, `.env.example`, `README.md`, `docs/hosting_check.md`.
+## Setup C — Free-hosting verification
 
-**Verification:** Health smoke test, frontend typecheck/build, local browser call, and deployed call from the actual frontend origin. Record deployment size and cold starts. Unverified provider/account feasibility remains an explicit blocker to that deployment choice.
+**Depends on:** Setup B.
+
+**Result:** The minimal site and health endpoint work at provider URLs; public OAuth prerequisites have a documented feasibility outcome.
+
+**Likely files:** `docs/hosting_check.md`, `docs/deployment.md`, `frontend/app/page.tsx`, `frontend/app/privacy/page.tsx`, deployment configuration if necessary, `.env.example`, `README.md`.
+
+**Acceptance criteria:** Verify actual no-card eligibility/limits for the proposed Vercel frontend/FastAPI hosting and Supabase; document any Render fallback decision. Establish an honest public homepage/privacy policy, final origins/redirects, and Google External publication eligibility without presenting unfinished product flows as released. Setup A account evidence remains valid; real sign-in is Spec 12. Use one hosted production environment, no paid resources or secrets in files.
+
+**Tests:** Deployed health call from the intended origin, failed-backend state, deployment-size/cold-start measurements, homepage/privacy link review and recorded provider/publication checks. An unavailable no-cost publication path blocks public auth; do not invent eligibility.
 
 ## Spec 01 — Display stored dish cards
 
-**Depends on:** Setup B. **Product acceptance references:** 3, 11, 13, 14, 16.
+**Depends on:** Setup B.
 
-**You can demo:** A local development page loads fixture offerings from the database through FastAPI and renders dish cards.
+**Result:** A local fixture page loads stored offerings through FastAPI and displays dish cards.
 
-**Implement:** Create only the catalog schema/repository/read API and card component needed here. Store configurable cities/coverage, stable restaurant/offering IDs, nullable prices/currency, source URLs, verification times, and per-attribute provenance. Allow missing vectors. Cards show unknown values, source/last-checked information, and safe restaurant/location links. Add loading, empty, and API-error states. Label synthetic fixtures clearly; this development page is not yet a recommendation feature or a new public browsing product.
+**Likely files:** `supabase/migrations/*_catalog.sql`, `backend/app/repositories/catalog.py`, `backend/app/routes/dishes.py`, `frontend/components/DishCard.tsx`, `frontend/app/dev/dishes/page.tsx`, `backend/tests/integration/test_catalog.py`, `frontend/tests/e2e/dish-cards.spec.ts`.
 
-**Done when:** Fixture round trips, duplicate dish names at different restaurants, foreign keys, read-only public access, rejected catalog writes, unsafe links/text, missing fields, and browser rendering. Include a second-city fixture without hardcoded Carmel logic.
+**Acceptance criteria:** Store configurable cities/coverage, stable restaurant/offering IDs, source and verification metadata, provenance, nullable prices and variants, and status. Display known fields and explicit unknowns. Label synthetic fixtures; allow only approved public read fields and reject public writes. This is a development view, not recommendations.
 
-## Spec 02 — Choose a location and search radius
+**Tests:** Fixture round trips, foreign keys, duplicate names across restaurants, variants, missing fields, unsafe text/source links, rejected writes, loading/empty/error rendering, and second-city fixtures.
 
-**Depends on:** Spec 01. **Product acceptance references:** 12, 16.
+## Spec 02 — Open restaurant information
 
-**You can demo:** Select a location and see only fixture offerings within the supported coverage and chosen radius.
+**Depends on:** Spec 01.
 
-**Implement:** Implement the location method/radius policy accepted in Setup A, backend coordinate validation and distance filtering, and an outside-coverage message. If geolocation is offered, retain manual fallback on denial or failure. Label area-based distances approximate. Do not retain precise location history.
+**Result:** A dish opens restaurant details and a safe external location link.
 
-**Done when:** Known coordinate distances, radius boundary, malformed coordinates, outside coverage, second-city configuration, denied geolocation, and changing the selected location in the UI.
+**Likely files:** `backend/app/routes/restaurants.py`, `frontend/components/RestaurantDetails.tsx`, `frontend/components/DishCard.tsx`, `backend/tests/test_restaurants.py`, `frontend/tests/e2e/restaurant-info.spec.ts`.
 
-## Spec 03 — Complete taste-preference onboarding
+**Acceptance criteria:** Show stored address/details and available website; derive the location link from stored coordinates. Missing information remains unknown; no live-hours or availability claims. Reuse this action later in saved dishes.
 
-**Depends on:** Spec 02. **Product acceptance references:** 1, 14.
+**Tests:** Dish-to-restaurant association, missing details, invalid IDs, unsafe URLs, correct destination coordinates, and keyboard open/close.
 
-**You can demo:** Complete at most five question screens and view a summary of the selected preferences.
+## Spec 03 — Select a Carmel location
 
-**Implement:** Collect the agreed cuisine, spice, dietary, price, and adventurousness fields. Add a shared validated preference contract and temporary session state that survives navigation under the accepted identity policy. Keep dietary restrictions separate from soft preferences. The summary must not claim these preferences already affect ranking; Specs 04 and 06 connect them to results.
+**Depends on:** Spec 01.
 
-**Done when:** Valid/invalid answers, field bounds, back/next navigation, at-most-five screens, session navigation, and keyboard completion. No permanent guest account is created unless separately approved.
+**Result:** Choosing Midtown or Arts & Design District changes the origin and approximate distances.
 
-## Spec 04 — Filter dishes by dietary and budget constraints
+**Likely files:** `data/coverage/carmel.json`, `backend/app/location.py`, `backend/app/routes/locations.py`, `frontend/components/LocationSelector.tsx`, `frontend/lib/guest-session.ts`, `backend/tests/test_location.py`, `frontend/tests/e2e/location.spec.ts`.
 
-**Depends on:** Spec 03. **Product acceptance references:** 2, 5, 12.
+**Acceptance criteria:** Verify accepted reference-point coordinates against reviewed evidence. Use configured coverage/preset IDs with the default 3-mile radius. No geolocation permission or address API is needed; reject unsupported locations and avoid precise location history.
 
-**You can demo:** The fixture dish view excludes offerings that fail the selected hard constraints and explains empty results.
+**Tests:** Known coordinate distances, changed origin, unsupported IDs, approximate labels, operation without geolocation, and additional-city configuration.
 
-**Implement:** Implement the dietary evidence/unknown-data policy and any approved price cap. Apply geography and hard constraints before any ranking. Wire onboarding constraints into the existing dish request. Never relax restrictions to fill results; unknown values cannot become evidence of suitability or allergy safety.
+## Spec 04 — Select a search radius
 
-**Done when:** Compatible/incompatible/unknown dietary fixtures, conflicting constraints, missing prices under a cap, no matches, and UI changes after modifying restrictions.
+**Depends on:** Spec 03.
 
-## Spec 05 — Enter a craving and correct its interpretation
+**Result:** Selecting 1, 3, or 5 miles changes eligible offerings.
 
-**Depends on:** Spec 04. **Product acceptance references:** 4, 5.
+**Likely files:** `backend/app/location.py`, `frontend/components/RadiusSelector.tsx`, `backend/tests/test_radius.py`, `frontend/tests/e2e/radius.spec.ts`.
 
-**You can demo:** Type a craving, see the backend interpretation, and correct or refine it before requesting results.
+**Acceptance criteria:** Default to 3 miles; validate allowed values server-side. Intersect radius with configured central Carmel coverage. A larger radius never implies wider catalog coverage; show an honest empty state.
 
-**Implement:** Implement the agreed bounded vocabulary for spicy/filling, chicken, surprise-me, and negation. Use Setup A’s hard-versus-soft behavior table and precedence rules. Provide editable interpreted criteria and unsupported/ambiguous-input states. Validate corrected criteria server-side; they cannot override dietary restrictions. Keep the craving separate from onboarding preferences.
+**Tests:** Boundary distances, invalid/negative radii, all three choices, changing location then radius, and out-of-coverage exclusion even within five miles.
 
-**Done when:** Table-driven examples, negation, ambiguous/unsupported/empty/oversized text, contradictory criteria, corrected submissions, and unchanged onboarding preferences. Do not imply unrestricted language understanding.
+## Spec 05 — Complete taste onboarding
 
-## Spec 06 — Rank and show the first recommendation set
+**Depends on:** Setup B; no location or auth dependency.
 
-**Depends on:** Spec 05. **Product acceptance references:** 1, 2, 6, 10, 13, 15.
+**Result:** At most five screens produce a validated temporary profile and summary.
 
-**You can demo:** Submit preferences, location, and craving to receive 3–5 ranked eligible dish cards with truthful explanations.
+**Likely files:** `backend/app/schemas/preferences.py`, `frontend/components/Onboarding.tsx`, `frontend/lib/guest-session.ts`, `backend/tests/test_preferences.py`, `frontend/tests/e2e/onboarding.spec.ts`.
 
-**Implement:** Connect prior features to the recommendation endpoint. Score only eligible stored offerings with configurable craving, cuisine, spice, price, distance, and cold-start discovery factors; use deterministic ties. Return fewer eligible results honestly when needed. Derive explanations from actual score contributions and stored facts; no match percentages or invented history. Keep the feature-only baseline working without embeddings or external calls. Bound payloads, candidate work, and output. Before any public exposure, add shared request limits across function instances using a verified free capability or minimal database mechanism; an in-memory-only counter is insufficient.
+**Acceptance criteria:** Collect cuisine, spice, price sensitivity and adventurousness; no dietary inputs. Answers survive guest navigation without creating an anonymous account. Do not claim ranking before Spec 09.
 
-**Done when:** Independent controlled ranking examples, zero/two/three/four/five-plus candidates, distinct offerings, hard constraints preserved, truthful explanations, missing vectors, offline external sources, request limits across instances, and onboarding → location → corrected craving → recommendations in the browser.
+**Tests:** Valid/invalid answers, field bounds, back/next navigation, screen-count limit, temporary state restoration and keyboard completion.
 
-## Spec 07 — Request another recommendation set
+## Spec 06 — Exclude unavailable catalog offerings
 
-**Depends on:** Spec 06. **Product acceptance references:** 8, 9.
+**Depends on:** Spec 01.
 
-**You can demo:** Click “another set” to see an alternative when one exists, or a clear exhaustion message.
+**Result:** Stale or verified withdrawn fixture offerings are withheld from recommendation candidates.
 
-**Implement:** Add bounded session memory and validate submitted offering IDs. Replace at least one result when eligible unseen alternatives exist. Define memory reset on changed craving/location/preferences and distinguish a transport retry from an intentional refresh. Failed calls must not falsely advance results or memory.
+**Likely files:** `backend/app/recommendations/eligibility.py`, `backend/app/repositories/catalog.py`, `frontend/app/dev/dishes/page.tsx`, `backend/tests/test_eligibility.py`.
 
-**Done when:** Unseen alternatives, exhaustion, small catalogs, retries, changed search context, malformed/oversized IDs, and browser failure recovery.
+**Acceptance criteria:** Apply the accepted 30-day re-verification policy with a defined time boundary. Distinguish stale from withdrawn; preserve records/IDs and show no-eligible-results honestly. No dietary filters or price cap. Use fixture statuses here; operator updates come later.
 
-## Spec 08 — Sign in and sign out
+**Tests:** Fixed-clock freshness boundary, missing verification times, fresh/stale/withdrawn records, preserved stored records, and unknown price remaining eligible under the same status/location conditions.
 
-**Depends on:** Spec 07; see identity gate. **Product acceptance references:** 7, 15.
+## Spec 07 — Interpret a craving
 
-**You can demo:** Sign in with the accepted provider, see authenticated state, and sign out cleanly.
+**Depends on:** Setup B.
 
-**Implement:** Implement the accepted auth method/callback and verify public-demo feasibility. Validate tokens server-side, derive identity from verified credentials, and expose only a minimal authenticated session response. Clear private UI/session state on sign-out and apply authenticated request limits. Preference persistence is the next feature.
+**Result:** A local input view displays structured criteria returned by the backend.
 
-**Done when:** Invalid/expired tokens, forged identity, canceled login, callback errors, logout state, and controlled browser auth flow. Separately smoke-test the real provider; normal tests do not depend on OAuth uptime.
+**Likely files:** `backend/app/recommendations/parse_craving.py`, `backend/app/routes/cravings.py`, `frontend/components/CravingInput.tsx`, `backend/tests/test_cravings.py`, `frontend/tests/e2e/craving.spec.ts`.
 
-## Spec 09 — Save and restore the onboarding profile
+**Acceptance criteria:** Follow the accepted soft-preference table for spicy/filling, chicken, surprise-me and negation. Surface unsupported/ambiguous input; bound request size. Do not rank or mutate profiles here.
 
-**Depends on:** Spec 08. **Product acceptance references:** 1, 7.
+**Tests:** Table-driven phrases, negation, empty/oversized requests, unsupported/ambiguous text, and displayed interpretation/error.
 
-**You can demo:** Onboarding preferences reappear after signing out and signing back in.
+## Spec 08 — Correct craving interpretation
 
-**Implement:** Add owned profile records and RLS with user-scoped database access. Transfer temporary answers on first login under the accepted guest policy without overwriting an existing returning profile. Recommendations load the signed-in profile while keeping current craving separate.
+**Depends on:** Spec 07.
 
-**Done when:** First-login transfer, returning-profile preservation, logout/login restoration, two-user isolation through API and direct data access, failed save recovery, and recommendations using restored preferences.
+**Result:** Users edit interpreted criteria and submit validated corrections.
 
-## Spec 10 — Edit saved preferences
+**Likely files:** `backend/app/schemas/cravings.py`, `frontend/components/CravingCriteriaEditor.tsx`, `backend/tests/test_corrected_criteria.py`, `frontend/tests/e2e/craving-correction.spec.ts`.
 
-**Depends on:** Spec 09. **Product acceptance references:** 7; MVP preference editing.
+**Acceptance criteria:** Use the parser's bounded criteria vocabulary and validate edits server-side. Corrections change only the current request; they cannot alter profile answers or catalog eligibility. Allow refinement after unsupported input.
 
-**You can demo:** Edit your preferences and see the next recommendation request use the changes.
+**Tests:** Add/remove/change criteria, malformed or contradictory submissions, unsupported keys, parse-failure recovery, and unchanged original profile fixture.
 
-**Implement:** Add the preferences screen and validated owned update operation. Keep explicit dietary restrictions separate from learned taste weights and current craving. Invalidate the relevant recommendation context according to the refresh policy and handle failed writes honestly.
+## Spec 09 — Rank the first recommendation set
 
-**Done when:** Preference edits persist across login, changed constraints affect eligibility, changed soft preferences affect their score contribution, invalid/unauthorized updates fail, and failed writes do not show false success.
+**Depends on:** Specs 04–06 and 08.
 
-## Spec 11 — Like or dislike a dish
+**Result:** A request returns up to five ranked eligible dish cards.
 
-**Depends on:** Spec 10. **Product acceptance references:** 6, 7, 8, 10.
+**Likely files:** `backend/app/recommendations/scoring.py`, `backend/app/routes/recommendations.py`, `frontend/app/recommendations/page.tsx`, `backend/tests/test_scoring.py`, `backend/tests/integration/test_recommendations.py`, `frontend/tests/e2e/first-recommendations.spec.ts`.
 
-**You can demo:** Like, dislike, switch, or clear feedback; the next request reflects the bounded change.
+**Acceptance criteria:** Apply eligibility before configurable soft scoring for craving, cuisine, spice, price, distance and novelty. Return 3–5 when available and fewer honestly otherwise; variants are not duplicate dishes. Unknown prices are neutral. Cravings do not rewrite profiles. No live source/model calls. Explanations and learned signals arrive separately; do not claim them. Keep this partial flow local unless public safeguards are implemented.
 
-**Implement:** Decide explicit-feedback weights/caps and exact-dislike exclusion versus penalty first. Add one owned current state per user/offering, controls, and deterministic recomputation or transactional updates of derived taste. Preserve dietary restrictions and make explanations agree with active feedback. Keep state and its learning effect in this feature so the button has an observable purpose.
+**Tests:** Independent ranking examples, deterministic ties, zero/two/three/four/five-plus results, distinct offerings, authoritative constraints, unknown prices, missing vectors, offline sources and guest submission.
 
-**Done when:** Like → Dislike → clear, retries, concurrent writes, failed writes, cross-user rejection, persistence, controlled before/after scores, and reversals without residual increments.
+## Spec 10 — Explain a recommendation
 
-## Spec 12 — Save and unsave a dish
+**Depends on:** Spec 09.
 
-**Depends on:** Spec 11. **Product acceptance references:** 6, 7, 8.
+**Result:** Each recommendation shows a reason based on actual ranking factors.
 
-**You can demo:** Toggle a card’s saved state independently of Like/Dislike, with state restored on return.
+**Likely files:** `backend/app/recommendations/explanations.py`, `frontend/components/DishCard.tsx`, `backend/tests/test_explanations.py`, `frontend/tests/e2e/explanations.spec.ts`.
 
-**Implement:** Add owned idempotent save state and card control. Decide and implement a weaker capped preference contribution than explicit feedback; unsaving reverses it. A dish can be saved and disliked. The saved collection screen is the next feature.
+**Acceptance criteria:** Use stored facts and active scoring contributions. Cold-start reasons cannot invent history; unknown data cannot justify a positive match. No percentages or allergy-safety claims. Later learning specs extend reasons only when their signals exist.
 
-**Done when:** Duplicate save/unsave, saved-and-disliked combination, contribution reversal, user isolation, failed writes, and logout/login restoring the card state.
+**Tests:** Score/reason agreement, missing facts, cold start, negative criteria and safe readable rendering.
 
-## Spec 13 — View your saved dishes
+## Spec 11 — Request another recommendation set
 
-**Depends on:** Spec 12. **Product acceptance references:** 11.
+**Depends on:** Spec 09.
 
-**You can demo:** Open the saved-dishes page, revisit restaurant information, and remove a save there.
+**Result:** Another-set action shows an alternative when possible or explains exhaustion.
 
-**Implement:** Add an owned saved-list query and page using existing cards/unsave behavior. Show empty/loading/error states and clear missing/stale/withdrawn offering states according to Setup A. Preserve references and do not imply current availability from stale data.
+**Likely files:** `backend/app/recommendations/refresh.py`, `frontend/components/AnotherSetButton.tsx`, `frontend/lib/guest-session.ts`, `backend/tests/test_refresh.py`, `frontend/tests/e2e/refresh.spec.ts`.
 
-**Done when:** Only the current user’s saves appear; unsave updates both page and cards; empty/failed requests, stale/missing offerings, safe location links, and return-session access work.
+**Acceptance criteria:** Bound temporary session memory; replace at least one result when eligible unseen alternatives exist. Define context reset on location/radius/preferences/craving changes. Distinguish transport retry from intentional refresh; failed calls cannot advance memory. Cross-session storage is Spec 20.
 
-## Spec 14 — Remember recommendations across sessions
+**Tests:** Unseen alternatives, small/exhausted catalogs, context changes, retries, malformed/oversized IDs and failure recovery.
 
-**Depends on:** Spec 13. **Product acceptance references:** 7, 8, 9.
+## Spec 12 — Sign in and sign out
 
-**You can demo:** After returning, another-set behavior accounts for recently shown recommendations.
+**Depends on:** Setup C; no recommendation-learning dependency.
 
-**Implement:** Decide retention, context reset, and memory bounds. Add owned recommendation-set records and persist signed-in memory using the existing refresh behavior. Keep guest memory temporary and bounded. Add cleanup for expired memory, avoiding raw cravings and precise location history; no history page.
+**Result:** Google/Supabase sign-in establishes a verified session and sign-out clears private state.
 
-**Done when:** Return-session refresh, context reset, exhausted catalog, repeat-safe writes, fabricated IDs, two-user access, retention boundaries, and cleanup preserving profiles/feedback/saves.
+**Likely files:** `backend/app/auth.py`, `frontend/lib/supabase.ts`, `frontend/app/auth/callback/route.ts`, `frontend/components/SignIn.tsx`, `backend/tests/test_auth.py`, `frontend/tests/e2e/auth.spec.ts`.
 
-## Spec 15 — Learn a little from dish and restaurant opens
+**Acceptance criteria:** Verify real callback/publication feasibility using final URLs. Derive identity from server-verified tokens; protect secrets and redirects/origins. Preserve guest-first access; no email service or anonymous-account merging. Public auth remains blocked if publication/sign-in is unverified.
 
-**Depends on:** Spec 14. **Product acceptance references:** 6, 8; bounded interaction requirements.
+**Tests:** Invalid/expired tokens, forged identity, canceled login, unsafe redirects, callback failure, logout cleanup, controlled browser tests and separate real-provider smoke check.
 
-**You can demo:** Opening a dish or restaurant has a small bounded effect on later recommendations.
+## Spec 13 — Save and restore onboarding preferences
 
-**Implement:** Decide event deduplication, retention, and weak-signal caps. Record only specified impressions, opens, feedback/save transitions, and refresh events; never interpret an impression as a visit or acceptance. Validate ownership/references, cap clicks below explicit feedback, and avoid counting feedback/save state twice. Extend cleanup and define how expired signals affect derived weights.
+**Depends on:** Specs 05 and 12; integrate with Spec 09 when present.
 
-**Done when:** Repeated/duplicate/fabricated events, cross-user access, weaker contributions, retention and recomputation, unchanged dietary restrictions, and the UI open → subsequent recommendation flow.
+**Result:** First-login answers persist and return after a later login.
 
-## Spec 16 — Import restaurant metadata
+**Likely files:** `supabase/migrations/*_profiles.sql`, `backend/app/routes/profile.py`, `frontend/lib/profile.ts`, `backend/tests/integration/test_profiles.py`, `frontend/tests/e2e/profile-persistence.spec.ts`.
 
-**Depends on:** Spec 15. **Product acceptance references:** Required data/acquisition; 13, 16.
+**Acceptance criteria:** Use owned records and RLS. First-login transfer must not overwrite an existing profile. Clear private UI on logout. Supply canonical signed-in answers to recommendation requests when implemented; current craving stays separate.
 
-**You can demo:** An operator command imports a reviewed cached Overpass sample and reports created/updated restaurants.
+**Tests:** First transfer, existing-profile preservation, failed save, return-session summary, API/direct-database isolation and recommendation integration when Spec 09 exists.
 
-**Implement:** Add configured geography queries, cached responses, stable OSM identities, metadata provenance, and bounded timeouts/retries/frequency. Restrict privileged writes to the operator path. Reimports must be repeat-safe; failures preserve existing data. Keep commands and fixtures reproducible; no request-time Overpass calls.
+## Spec 14 — Edit saved preferences
 
-**Done when:** Cached node/way mapping, missing URLs/cuisines, malformed coordinates, repeat import, source failures/rate limits, and second-city configuration. Run a separate bounded live source smoke check.
+**Depends on:** Specs 09 and 13.
 
-## Spec 17 — Import reviewed menu offerings
+**Result:** An edited preference persists and affects the next recommendation request.
 
-**Depends on:** Spec 16. **Product acceptance references:** 3, 5, 11, 13; Required data/acquisition.
+**Likely files:** `backend/app/routes/profile.py`, `frontend/app/preferences/page.tsx`, `backend/tests/integration/test_profile_updates.py`, `frontend/tests/e2e/edit-preferences.spec.ts`.
 
-**You can demo:** An operator imports a small reviewed menu batch; real offerings appear in the existing recommendation UI.
+**Acceptance criteria:** Validate owned updates; keep current craving and learned weights separate. Reset relevant recommendation context when available. Failed writes cannot show false success.
 
-**Implement:** Build extraction for only audited formats plus permitted structured manual entry. Separate extraction/review/import, restrict reviewed source URLs and redirects, and preserve access decisions, nullable price/currency, evidence, verification times, and stable offering identities. Reject malformed records without discarding the catalog. Confirm real cards/explanations use sourced facts.
+**Tests:** Invalid/unauthorized changes, restored-session values, changed score contribution, failed-write recovery and preserved unrelated fields.
 
-**Done when:** Known extraction fixtures and price variants, unsafe URLs/redirects, unsupported sources, repeat imports, stable feedback/save references, failed-import preservation, and manual source-to-card comparison. Normal tests use fixtures.
+## Spec 15 — Record dish feedback
 
-## Spec 18 — Refresh menus and handle withdrawn dishes
+**Depends on:** Specs 01 and 12.
 
-**Depends on:** Spec 17. **Product acceptance references:** 3, 11, 13.
+**Result:** Set, switch or clear Like/Dislike and restore it in another session.
 
-**You can demo:** Reimport changed menu data, update cards, and show a clear status for stale or withdrawn saved dishes.
+**Likely files:** `supabase/migrations/*_feedback.sql`, `backend/app/routes/feedback.py`, `frontend/components/DishFeedback.tsx`, `backend/tests/integration/test_feedback.py`, `frontend/tests/e2e/feedback.spec.ts`.
 
-**Implement:** Apply the accepted freshness/withdrawal policy, preserving identity across updates. A fetch failure is not proof of withdrawal and must not erase dishes. Withhold offerings according to policy while preserving user references. Document refresh/recovery commands and meet the agreed launch catalog minimum or record the outstanding gate.
+**Acceptance criteria:** Maintain one owned state per user/offering with reversible, repeat-safe writes. Reject invalid references; show write failures honestly. Store feedback only; do not promise personalization before Spec 16.
 
-**Done when:** Changed price/attributes, unchanged reimport, genuine withdrawal, stale thresholds, failed retrieval, preserved saves/feedback, and recommendations/saved view showing the correct states with sources offline.
+**Tests:** Like → Dislike → clear, duplicate/concurrent requests, invalid IDs, API/database user isolation, failure recovery and return-session state.
 
-## Spec 19 — Enrich dish attributes locally
+## Spec 16 — Personalize from explicit feedback
 
-**Depends on:** Spec 18. **Product acceptance references:** 5, 10, 13.
+**Depends on:** Specs 09–10, 13 and 15.
 
-**You can demo:** Run a local enrichment batch and inspect its uncertain attributes in the existing cards.
+**Result:** Existing Likes/Dislikes change subsequent ranking and explanations.
 
-**Implement:** Select a suitable local tool for existing hardware. Preserve sourced/reviewed/inferred evidence and unknowns; inference cannot qualify dietary safety contrary to the accepted policy. Keep heavy dependencies out of the API, skip unchanged work predictably, and preserve feature ranking on enrichment failure.
+**Likely files:** `backend/app/recommendations/taste_profile.py`, `backend/app/recommendations/scoring.py`, `backend/app/recommendations/explanations.py`, `backend/tests/test_feedback_learning.py`, `frontend/tests/e2e/feedback-learning.spec.ts`.
 
-**Done when:** Provenance, repeated batches, failed/missing-tool fallback, unchanged dietary eligibility, and manual review of an attribute sample. Smoke-test real tools separately from deterministic tests.
+**Acceptance criteria:** Decide bounded weights and exact-dislike exclusion versus penalty. Use deterministic recomputation or consistent transactional updates; reversals remove obsolete contributions. Preserve base catalog eligibility and explicit profile answers. Reasons reflect active feedback.
 
-## Spec 20 — Add optional stored-vector dish similarity
+**Tests:** Controlled before/after scores, repeated feedback without drift, clear/switch reversal, combined signals, unchanged hard constraints and cross-session reasons.
 
-**Depends on:** Spec 19. **Product acceptance references:** 6, 10, 13.
+## Spec 17 — Save and unsave a dish
 
-**You can demo:** If enabled, liked-dish similarity contributes to ranking and truthful explanations without online inference.
+**Depends on:** Specs 01 and 12; no feedback-learning dependency.
 
-**Implement:** Decide model/version/dimensions and contribution first. Generate vectors locally and compare stored liked-dish vectors or their aggregate at request time. Reject incompatible vectors, handle reruns consistently, and preserve the feature-only fallback. If embeddings are deferred or unavailable, record why and verify the baseline; do not invent a model requirement.
+**Result:** Saved state persists independently of Like/Dislike.
 
-**Done when:** Controlled vectors, model/dimension mismatch, repeat generation, missing vectors/model, actual similarity explanations, and a separate small local model smoke check if enabled.
+**Likely files:** `supabase/migrations/*_saves.sql`, `backend/app/routes/saves.py`, `frontend/components/SaveDishButton.tsx`, `backend/tests/integration/test_saves.py`, `frontend/tests/e2e/save-toggle.spec.ts`.
 
-## Spec 21 — Validate and release the demo
+**Acceptance criteria:** Owned idempotent save/unsave with restored card state. A dish can be saved and disliked; failed writes must not fake success. Collection and learning are separate features.
 
-**Depends on:** Spec 20 and all applicable earlier checks. **Product acceptance references:** All acceptance criteria.
+**Tests:** Duplicate/concurrent writes, return-session state, invalid/unauthorized references, write failures and independence from feedback fixtures.
 
-**You can demo:** The complete approved V1 works at public URLs with a reproducible demo and operating guide.
+## Spec 18 — View saved dishes
 
-**Implement:** Recheck free/no-card eligibility, quotas, OAuth/origins/secrets, catalog minimum, shared request limits, and ownership policies. Demonstrate accepted first-visit and returning-user flows with external sources/local processing offline. Review keyboard and desktop layouts, second-city configuration without ranking edits, and useful outage messages. Measure agreed latency/cold starts and report pilot evidence or its pending status. Document refresh, cleanup, export/recovery, pausing/quota recovery, and rollback.
+**Depends on:** Specs 02 and 17.
 
-**Done when:** Release feature suites, dedicated-account deployed smoke journey, isolation and client-secret checks, offline-source/missing-vector behavior, and desktop review. Rehearse destructive migration/recovery only locally. Record unmet required criteria as remaining work.
+**Result:** A collection shows the user's saved offerings with restaurant and unsave actions.
+
+**Likely files:** `backend/app/routes/saves.py`, `frontend/app/saved/page.tsx`, `backend/tests/integration/test_saved_list.py`, `frontend/tests/e2e/saved-list.spec.ts`.
+
+**Acceptance criteria:** Provide empty/loading/error states. Label stale/withdrawn records honestly while preserving references. Reuse existing controls so removal synchronizes list/card state.
+
+**Tests:** User isolation, empty list, stale/withdrawn/missing-reference fixtures, unsave synchronization, failed load, links and return-session access.
+
+## Spec 19 — Personalize from saves
+
+**Depends on:** Specs 16 and 17.
+
+**Result:** Saves add a weaker preference signal; unsaving removes it.
+
+**Likely files:** `backend/app/recommendations/taste_profile.py`, `backend/app/recommendations/explanations.py`, `backend/tests/test_save_learning.py`, `frontend/tests/e2e/save-learning.spec.ts`.
+
+**Acceptance criteria:** Define weights/caps below explicit feedback and saved-and-disliked handling without deleting either state. Recompute consistently, preserve eligibility and explain only active evidence.
+
+**Tests:** Relative bounded contributions, duplicate saves, unsave reversal, saved/disliked combinations, stable eligibility and restored-session ranking.
+
+## Spec 20 — Remember previously shown recommendations
+
+**Depends on:** Specs 11 and 12.
+
+**Result:** Returning-session refresh considers recently shown recommendations.
+
+**Likely files:** `supabase/migrations/*_recommendation_memory.sql`, `backend/app/recommendations/memory.py`, `frontend/lib/recommendation-session.ts`, `backend/tests/integration/test_memory.py`, `frontend/tests/e2e/returning-refresh.spec.ts`.
+
+**Acceptance criteria:** Store owned bounded memory with agreed context reset/expiration. Ignore expired memory immediately; physical cleanup is Spec 23. Guest memory stays temporary; no history page, raw cravings or precise location history.
+
+**Tests:** Return-session alternatives, reset/exhaustion, repeat-safe writes, invalid references, two-user isolation and fixed-clock expiration.
+
+## Spec 21 — Record recommendation interactions
+
+**Depends on:** Specs 02, 11–12, 15 and 17.
+
+**Result:** Agreed UI actions create validated deduplicated records.
+
+**Likely files:** `supabase/migrations/*_interactions.sql`, `backend/app/routes/interactions.py`, `frontend/lib/interactions.ts`, `backend/tests/integration/test_events.py`, `frontend/tests/e2e/events.spec.ts`.
+
+**Acceptance criteria:** Record only impressions, dish/restaurant opens, feedback/save transitions and refreshes. Validate user/offering/set references and define event IDs, bounds and retention metadata. Impressions do not prove acceptance/visits. Recording alone does not change ranking; current feedback/save states remain their learning source.
+
+**Tests:** Expected events per action, retry deduplication, fabricated/cross-user references, payload/rate bounds, sensitive-field exclusion and no duplicate feedback/save contributions.
+
+## Spec 22 — Personalize from dish and restaurant opens
+
+**Depends on:** Specs 16, 19 and 21.
+
+**Result:** Open events have a small capped effect on subsequent ranking.
+
+**Likely files:** `backend/app/recommendations/taste_profile.py`, `backend/tests/test_open_learning.py`, `frontend/tests/e2e/open-learning.spec.ts`.
+
+**Acceptance criteria:** Decide how restaurant opens map to dish attributes. Keep weights weaker than explicit feedback, ignore expired events, and cap repeated clicks. Impressions do not count as opens or visits. Preserve eligibility.
+
+**Tests:** Repeated/duplicate opens, cap/relative weights, expiry, no impression-only learning, no double-counted feedback/saves and open → next recommendation.
+
+## Spec 23 — Expire interaction history
+
+**Depends on:** Specs 20–22.
+
+**Result:** An operator removes expired memory/events while preserving durable state.
+
+**Likely files:** `pipeline/prune_history.py`, `pipeline/tests/test_prune_history.py`, `docs/data_operations.md`.
+
+**Acceptance criteria:** Document retention and a scoped preview/dry-run command. Reconcile materialized signals if needed; cleanup cannot revive expired effects or remove profiles/feedback/saves/catalog. Repeated runs are safe.
+
+**Tests:** Fixed-clock boundaries, preview/deletion counts, repeated runs, signal consistency and durable-state preservation in a disposable database.
+
+## Spec 24 — Import restaurant metadata
+
+**Depends on:** Spec 01 and completed Setup A; no auth/learning dependencies.
+
+**Result:** An operator imports a bounded cached Overpass sample.
+
+**Likely files:** `pipeline/pyproject.toml`, `pipeline/import_restaurants.py`, `pipeline/sources/overpass.py`, `pipeline/tests/test_restaurant_import.py`, `data/coverage/carmel.json`, `docs/data_operations.md`.
+
+**Acceptance criteria:** Use configured geography, stable OSM identity, metadata/provenance, cached responses and bounded retries/timeouts/frequency. Privileged writes are operator-only; repeat imports update without duplicates and failure preserves data. No request-time Overpass calls.
+
+**Tests:** Cached node/way mapping, missing metadata, malformed coordinates, reruns, failures/rate limits, second-city configuration and one separate bounded live check.
+
+## Spec 25 — Extract a menu into reviewable records
+
+**Depends on:** Setup A and Setup B; no database-import dependency.
+
+**Result:** One reviewed format produces structured candidates for manual review.
+
+**Likely files:** `pipeline/extract_menu.py`, `pipeline/sources/menus.py`, `data/menu_sources.json`, `pipeline/tests/fixtures/menus/`, `pipeline/tests/test_extraction.py`, `docs/data_operations.md`.
+
+**Acceptance criteria:** Fetch only reviewed public sources with permitted access/reuse and validated redirects. Preserve source evidence, nullable values and variants. Candidates are not published automatically; no general crawler. Manual structured entry remains valid for unsupported formats.
+
+**Tests:** Approved fixtures, absent/variant prices, malformed/unsupported formats, unsafe URLs/redirects, blocked retrieval and zero catalog writes. Compare a small permitted sample with its source.
+
+## Spec 26 — Import reviewed dish offerings
+
+**Depends on:** Spec 01 and Setup A; restaurants from Spec 24 or reviewed manual entry; Spec 25 output optional.
+
+**Result:** A reviewed batch creates traceable stored offerings.
+
+**Likely files:** `pipeline/import_offerings.py`, `pipeline/schemas/offerings.py`, `pipeline/tests/test_offering_import.py`, `data/reviewed/`, `docs/data_operations.md`.
+
+**Acceptance criteria:** Validate review status, restaurant identity, variants, provenance and verification times. Reject malformed/unreviewed records without discarding data. Unchanged reruns are safe; changes to existing offerings require Spec 27's explicit refresh path. Real cards preserve source facts.
+
+**Tests:** Valid/invalid batches, missing restaurants, reruns, duplicate variants, changed-record rejection/report, stable IDs and source-to-card comparison. Integrate recommendations when Spec 09 exists.
+
+## Spec 27 — Refresh existing dish information
+
+**Depends on:** Spec 26.
+
+**Result:** Reviewed updates change existing details without changing offering identity.
+
+**Likely files:** `pipeline/refresh_offerings.py`, `pipeline/tests/test_refresh_offerings.py`, `docs/data_operations.md`.
+
+**Acceptance criteria:** Apply reviewed price/description/variant updates and verification times while preserving feedback/save references and provenance. Fetch failures never erase/withdraw dishes. Invalidate enrichment/vector metadata if its input changes; regeneration is separate.
+
+**Tests:** Changed/unchanged updates, renewed freshness, failed-fetch preservation, stable reference fixtures, vector invalidation and updated cards without duplication.
+
+## Spec 28 — Mark a dish as withdrawn
+
+**Depends on:** Specs 06 and 26.
+
+**Result:** An evidenced withdrawal removes the dish from eligible results without deleting its record.
+
+**Likely files:** `pipeline/mark_withdrawn.py`, `pipeline/tests/test_withdrawal.py`, `docs/data_operations.md`.
+
+**Acceptance criteria:** Require verified disappearance or direct notice with source/time/reason. Distinguish withdrawal from stale/unverified status. No withdrawal from fetch failure or hard deletion. Reuse eligibility/status display behavior.
+
+**Tests:** Verified withdrawal, missing-evidence rejection, failed-fetch non-withdrawal, repeat command, preserved reference fixtures and saved-view integration when Spec 18 exists.
+
+## Spec 29 — Enrich dish attributes locally
+
+**Depends on:** Spec 26.
+
+**Result:** A local batch adds inspectable inferred attributes to reviewed offerings.
+
+**Likely files:** `pipeline/enrich_attributes.py`, `pipeline/pyproject.toml`, `pipeline/tests/test_enrichment.py`, `docs/data_operations.md`.
+
+**Acceptance criteria:** Select a free tool for the recorded M2/16 GB hardware. Preserve sourced values, inference provenance/version and unknowns. Reruns are predictable; failures preserve baseline ranking. No allergy-safety claims, vectors or request-time models in this spec.
+
+**Tests:** Provenance, sourced-value preservation, unchanged/revised inputs, missing-tool failure and stable eligibility; separate local-tool smoke check and manual attribute review.
+
+## Spec 30 — Generate and store dish embeddings
+
+**Depends on:** Spec 26; Spec 29 enrichment optional.
+
+**Result:** A local batch stores vectors with model/version/dimension metadata.
+
+**Likely files:** `pipeline/generate_embeddings.py`, `supabase/migrations/*_embeddings.sql`, `pipeline/tests/test_embeddings.py`, `docs/data_operations.md`.
+
+**Acceptance criteria:** Choose a free model fitting local hardware; enable pgvector if needed. Preserve input/model consistency, skip unchanged work and reject incompatible vectors. Missing-vector fallback survives failure. No ranking changes or online inference yet.
+
+**Tests:** Controlled-vector storage, dimension/model mismatch, reruns, revised input, missing-model failure and separate small real-model smoke check; no normal-test model downloads.
+
+## Spec 31 — Rank using stored dish similarity
+
+**Depends on:** Specs 16 and 30.
+
+**Result:** Similarity to liked dishes contributes to ranking and explanations.
+
+**Likely files:** `backend/app/recommendations/similarity.py`, `backend/app/recommendations/scoring.py`, `backend/app/recommendations/explanations.py`, `backend/tests/test_similarity.py`, `frontend/tests/e2e/similarity.spec.ts`.
+
+**Acceptance criteria:** Define a bounded contribution from compatible liked-dish vectors or their aggregate. Preserve eligibility and feature-only fallback with absent likes or missing/incompatible vectors. No online inference. If optional similarity is deferred, record the decision rather than marking unimplemented work complete.
+
+**Tests:** Controlled similarity ordering, contribution/reason agreement, absent likes, partial/mismatched/stale vectors and success with model/source access disabled.
+
+## Release verification checklist — not a product feature
+
+**Depends on:** All required feature behavior integrated; optional-vector disposition recorded. **Status:** Not started.
+
+**Evidence files:** `docs/deployment.md`, `docs/demo-checklist.md`, `docs/validation-results.md`, `README.md`, relevant integration/browser tests.
+
+- [ ] Meet five reviewed restaurants and 25 distinct reviewed offerings within approved coverage and freshness; the setup sample is insufficient.
+- [ ] Verify free/no-card hosting, public OAuth publication and real sign-in, provider URLs, origins and secrets. No unapproved paid plan or additional hosted environment.
+- [ ] Verify shared request limits across instances before public data endpoints are enabled; input/work bounds, token checks and ownership are already part of implementing slices.
+- [ ] Run guest onboarding → location/radius → craving/correction → ranked explained results → another set, plus returning-user profile/feedback/saves/learning journeys.
+- [ ] Verify API/direct-database isolation, safe links/text, no privileged client secrets or sensitive logs, useful failure states, keyboard access and both desktop sizes.
+- [ ] Verify stored-catalog recommendations with Overpass/menu/model access unavailable and the operator machine offline; exercise missing-vector fallback and second-city fixtures without ranking changes.
+- [ ] Measure warm API p95 against the accepted three-second target; record environment, request count and catalog size. Report cold starts separately.
+- [ ] Recruit the agreed five pilot participants; report whether at least three identify a recommended dish they would consider trying. Set the still-unagreed date before recruitment; pending evidence remains pending.
+- [ ] Document refresh, withdrawal, pruning, local export/recovery, provider pausing/quota recovery and rollback. Rehearse destructive operations only in a disposable local database.
+- [ ] Run relevant feature suites and a dedicated-account deployed smoke journey. Record unmet required criteria as remaining work; files existing does not prove release readiness.
+
+## Previous-ID migration guide
+
+Existing decision records and the Setup A spec may contain historical references. This table disambiguates them; it does not reopen completed decisions. Reconcile old drafts with the new scope before use. IDs remain stable after this approved replacement even if execution order changes.
+
+| Previous task | New task(s) |
+|---|---|
+| Setup A | Setup A, completion preserved |
+| Setup B | Setup B local setup; Setup C hosting/public OAuth prerequisites |
+| 01 — Stored cards | 01–02 |
+| 02 — Location/radius | 03–04 |
+| 03 — Onboarding | 05 |
+| 04 — Catalog eligibility | 06, geographic filtering in 03–04 |
+| 05 — Craving/correction | 07–08 |
+| 06 — First recommendations | 09–10 |
+| 07 — Another set | 11 |
+| 08 — Authentication | 12 |
+| 09 — Profile persistence | 13 |
+| 10 — Edit preferences | 14 |
+| 11 — Feedback and learning | 15–16 |
+| 12 — Saves and learning | 17, 19 |
+| 13 — Saved collection | 18 |
+| 14 — Recommendation memory | 20, 23 |
+| 15 — Interaction learning | 21–23 |
+| 16 — Restaurant import | 24 |
+| 17 — Menu extraction/import | 25–26 |
+| 18 — Refresh/withdrawal | 27–28 |
+| 19 — Attribute enrichment | 29 |
+| 20 — Vectors/similarity | 30–31 |
+| 21 — Release | Release verification checklist |
+
+In particular, historical coordinate checks referring to Spec 02 now belong to Spec 03; enrichment references to Spec 19 now mean Spec 29; public-auth references to Setup B/Spec 08 now mean Setup C/Spec 12.
 
 ## Product acceptance coverage
 
-These numbers refer to PROJECT_SPEC.md acceptance criteria, not feature IDs. Spec 21 verifies the complete integration; earlier partial features do not claim full V1 acceptance.
+Numbers refer to PROJECT_SPEC.md, not feature IDs. Release review verifies integration; partial feature completion does not imply full V1 acceptance.
 
-| Product criterion | Feature specs (plus setup where noted) |
+| Product criterion | Feature specs / setup |
 |---|---|
-| 1 | 03, 06, 09 |
-| 2 | 04, 06 |
-| 3 | 01, 17–19 |
-| 4 | 05 |
-| 5 | 04–05, 17, 19 |
-| 6 | 06, 11–12, 15, 20 |
-| 7 | 08–15 |
-| 8 | 07, 11–15 |
-| 9 | 07, 14 |
-| 10 | 06, 11, 19–20 |
-| 11 | 01, 13, 17–18 |
-| 12 | 02, 04 |
-| 13 | 01, 06, 16–20 |
-| 14 | 01–15, 21 |
-| 15 | Setup A–B; 06, 08–15, 21 |
-| 16 | 01–02, 16, 21 |
+| 1 — Short onboarding and recommendations | 03–05, 07–09, 13 |
+| 2 — Eligible result count | 04, 06, 09 |
+| 3 — Sourced cards and unknown values | 01, 25–29 |
+| 4 — Interpretation/refinement | 07–08 |
+| 5 — No dietary controls/safety claims; hard location constraints | 01, 03–06, 09, 29 |
+| 6 — Bounded learning | 16, 19, 22; optional 31 |
+| 7 — Persistence and isolation | 12–23 |
+| 8 — Reversible/repeat-safe actions | 11, 15, 17, 20–23 |
+| 9 — Alternatives and exhaustion | 11, 20 |
+| 10 — Truthful explanations | 10, 16, 19, 22, 31 |
+| 11 — Saves and restaurant information | 02, 17–18, 27–28 |
+| 12 — Coverage and distance | 03–04 |
+| 13 — Cached catalog and vector fallback | 06, 09, 24–31 |
+| 14 — Desktop usability | Each UI slice and release review |
+| 15 — Public free flow and security | Setup A–C, each affected slice, release review |
+| 16 — Configurable coverage | 01, 03–04, 24, release review |
 
 ## Scope boundary
 
-Carmel desktop demo only. Mobile/native apps, ordering, reviews/social features, a taste graph, collaborative training, online generative models, a universal crawler, live stock/open-now guarantees, a visual map, user-facing history, and enterprise infrastructure remain deferred. The fixture view is development scaffolding, not an added catalog-browsing product requirement.
+Carmel desktop demo only. Dietary filters, mobile/native support, ordering/delivery/reservations, reviews/social features, a taste graph, collaborative model training, online generative models, a universal crawler, live stock/open-now guarantees, visual maps, a history page and enterprise infrastructure remain deferred. Early fixture screens are development scaffolding, not public browsing requirements.

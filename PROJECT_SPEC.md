@@ -1,6 +1,6 @@
 # Dish Recommendation App — Project Specification
 
-Status: V1 scope based on the founder interview. Proposed defaults and unresolved decisions are identified below; no application implementation is included.
+Status: V1 scope with Setup A complete and decisions recorded in `docs/decisions.md`. A six-offering real factual sample exists; dedicated Google/Supabase account-level OAuth setup succeeded without a card. Public OAuth publication and sign-in remain unverified; no application implementation is included.
 
 ## Problem statement
 
@@ -14,7 +14,7 @@ The app will recommend 3–5 dishes at nearby Carmel, Indiana restaurants using 
 - People who are unsure what to eat or want to discover something beyond their familiar choices.
 - Returning users whose explicit feedback can improve recommendations across sessions.
 
-Carmel, Indiana is the launch city, not a promise of comprehensive restaurant coverage. The initial coverage area within Carmel and catalog size remain to be selected. Cities and geographic coverage must be represented as data/configuration so additional cities do not require changes to the recommendation algorithm.
+Carmel, Indiana is the launch city, not a promise of comprehensive restaurant coverage. V1 curates restaurants in central Carmel's Midtown and Arts & Design District, with a release gate of at least five reviewed restaurants and 25 distinct reviewed dish offerings. Cities and geographic coverage must be represented as data/configuration so additional cities do not require changes to the recommendation algorithm.
 
 ## User stories
 
@@ -32,24 +32,24 @@ Carmel, Indiana is the launch city, not a promise of comprehensive restaurant co
 
 ### Onboarding and identity
 
-- Supabase authentication with a free, no-card login method; exact method remains unresolved.
-- Approximately five quick questions covering cuisine preferences, spice tolerance, dietary restrictions, price sensitivity, and adventurousness.
+- Supabase authentication targeted to Google OAuth. Dedicated account-level setup succeeded without a card; public publication and sign-in remain release gates after a public app homepage, privacy policy, and final URLs exist. Guests can see first results before signing in; sign-in preserves preferences and feedback.
+- At most five quick questions covering cuisine preferences, spice tolerance, price sensitivity, and adventurousness. V1 has no dietary exclusion question or filter.
 - Store the onboarding profile in the database and allow basic preference edits.
-- Persist identity, profile, feedback, saves, and relevant recommendation interactions across sessions. Authentication timing relative to the first recommendation remains unresolved.
+- Persist identity, profile, feedback, saves, and relevant recommendation interactions across sessions after sign-in. First results are available to guests using temporary answers.
 
 ### Craving and location input
 
 - Accept natural-language cravings, including “something spicy and filling,” “I want chicken,” and “surprise me.”
 - Use a bounded vocabulary, rules, and/or lightweight open-source NLP to extract supported preferences. Do not require a hosted generative model.
 - Display interpreted criteria so users can correct misunderstandings. Unsupported requests should prompt refinement rather than imply full understanding.
-- Support explicit location selection; browser geolocation may be offered with permission but must have a manual fallback.
-- Limit recommendations to supported Carmel coverage. The manual location method and default search radius remain unresolved.
+- Support manual selection of Midtown or Arts & Design District as approximate starting areas. V1 does not require browser geolocation.
+- Limit recommendations to the curated central Carmel catalog and configured coverage. Use a 3-mile default radius with 1- and 5-mile options; a larger radius does not imply wider catalog coverage.
 - Distinguish persistent preferences from the current request: a single craving must not overwrite the user's long-term profile.
 
 ### Recommendations and explanations
 
 - Return 3–5 distinct eligible dish offerings when sufficient data exists.
-- Filter hard constraints before ranking. Dietary exclusions must never be relaxed to fill the result list.
+- Filter supported hard constraints, including location coverage, before ranking; never relax them to fill the result list. V1 has no dietary exclusions.
 - Rank with transparent weighted features: craving match, cuisine, spice, price, distance, novelty, and dish similarity.
 - Use stored dish embeddings for similarity where useful; feature scoring remains a valid fallback when embeddings are unavailable.
 - Derive explanations from actual ranking factors and available dish data. Do not show percentage matches or probability claims.
@@ -62,7 +62,7 @@ Carmel, Indiana is the launch city, not a promise of comprehensive restaurant co
 - Like and Dislike are mutually exclusive, reversible feedback states for a dish offering. Save is an independent toggle.
 - Persist feedback and adjust subsequent ranking; changes should not require model retraining.
 - Give explicit feedback more influence than saves or clicks. Repeated clicks must not accumulate unlimited preference weight.
-- Keep dietary restrictions authoritative; inferred taste updates cannot modify them.
+- Inferred taste updates cannot create or change hard constraints. V1 does not collect dietary restrictions.
 - Record only a small defined event set: recommendation impressions, dish/restaurant opens, likes, dislikes, saves/unsaves, and requests for another set.
 - Provide a simple saved-dishes view. A user-facing recommendation history page is not required.
 - Learning rules, weights, and the effect of dislikes on similar dishes require tuning; do not claim real-world recommendation quality before evaluation.
@@ -73,7 +73,7 @@ Carmel, Indiana is the launch city, not a promise of comprehensive restaurant co
 
 - City/coverage record: identifier, name, and configured geographic extent.
 - Restaurant: stable internal ID, OSM source ID, city, name, coordinates, available address, cuisine tags, website/menu URL, source, and last retrieval time.
-- Dish offering: stable ID tied to a restaurant, menu name, available description, nullable price and currency, source URL, and last verification time.
+- Dish offering: stable ID tied to a restaurant, menu name, available description, nullable price and currency, source URL, last verification time, and sourced price variants kept under one offering identity.
 - Dish attributes: available cuisine, ingredients, spice, creaminess, other flavor/texture tags, and dietary information. Preserve whether each attribute is explicitly sourced, manually reviewed, or inferred; allow unknown values.
 - Embedding: vector, model identifier/version, and generation time so vectors can be regenerated consistently.
 - Ingestion metadata: source access decision, extraction/review status, and failures; retain only source content needed for the demo.
@@ -92,7 +92,7 @@ Carmel, Indiana is the launch city, not a promise of comprehensive restaurant co
 - Extract names, descriptions, and prices only from selected public menu sources whose access and reuse are permitted under the applicable site terms and robots rules. Do not bypass access controls.
 - Use a small supported set of menu formats initially. Failed or unsupported extraction can be reviewed and entered manually from permitted sources.
 - Run extraction, local NLP enrichment, and Sentence Transformers embedding generation as operator-run batch work on existing local hardware. Hosted recommendation requests must not depend on that machine being online.
-- NLP-derived ingredients and dietary labels are uncertain. Do not interpret inferred labels or missing ingredients as verified allergy safety. The exact supported dietary filters and unknown-data policy remain unresolved before implementation of those filters.
+- NLP-derived ingredients and dietary labels are uncertain. Do not interpret inferred labels or missing ingredients as verified allergy safety. Dietary filters are outside V1; adding them later requires a separate evidence and unknown-data policy.
 - Preserve source attribution and last-checked information. Data freshness is bounded by imports; live menus, inventory, and exact current prices are not promised.
 
 ## Technical constraints
@@ -124,10 +124,10 @@ Carmel, Indiana is the launch city, not a promise of comprehensive restaurant co
 - A full taste graph, collaborative filtering, continuous model training, or a conversational LLM assistant.
 - Match percentages and calibrated probability estimates.
 - Comprehensive Carmel coverage, automatic ingestion from arbitrary websites, OCR for every menu format, continuous scraping, and an ingestion administration UI.
-- Live stock/open-now guarantees, verified nutrition, and allergy-safety guarantees.
+- Dietary exclusion filters, live stock/open-now guarantees, verified nutrition, and allergy-safety guarantees.
 - A visual map is not necessary for V1; basic restaurant details and an external location link satisfy the stated action.
 
-Persistent identity, saves, and feedback remain in scope because they support the user's explicit requirement to learn across sessions. The major proposed scope reduction is a curated, batch-imported catalog instead of a general-purpose menu crawler. This preserves the core personalization experiment while keeping the free hosting requirement practical. Initial catalog boundaries still need to be chosen.
+Persistent identity, saves, and feedback remain in scope because they support the user's explicit requirement to learn across sessions. The catalog is curated and batch-imported rather than built by a general-purpose menu crawler. This preserves the core personalization experiment while keeping the free hosting requirement practical. The accepted central Carmel area and release minimum are recorded in `docs/decisions.md`.
 
 ## Acceptance criteria
 
@@ -135,8 +135,8 @@ Persistent identity, saves, and feedback remain in scope because they support th
 2. Where at least five eligible offerings exist, a request returns 3–5 distinct offerings. With fewer than three, show the available eligible results and a clear coverage/constraint message; never invent dishes.
 3. Every result resolves to a stored restaurant and menu source and includes the required card fields. Unknown prices and attributes remain visibly unknown.
 4. Controlled examples for spicy/filling, chicken, and surprise-me input produce the intended structured criteria. Unsupported text has an explicit refinement path.
-5. Supported dietary exclusions remove incompatible candidates before scoring. Tests cover missing dietary data according to the policy selected before implementation; no inferred allergy-safety claims appear.
-6. With other inputs fixed in a controlled catalog, a like increases the relevant preference contribution and a dislike decreases it on the next request. Saves/clicks have weaker bounded effects and cannot override dietary constraints.
+5. V1 presents no dietary exclusion controls or allergy-safety claims. Missing and inferred food attributes remain visibly uncertain; supported location constraints are applied before scoring.
+6. With other inputs fixed in a controlled catalog, a like increases the relevant preference contribution and a dislike decreases it on the next request. Saves/clicks have weaker bounded effects and cannot override hard constraints.
 7. After signing out and signing back into the same account, onboarding preferences, feedback, and saved dishes are restored. Users cannot read or change another user's private records.
 8. Like/Dislike changes do not create contradictory active feedback; save/unsave and repeated requests are idempotent where applicable.
 9. Requesting another set changes at least one result when eligible unseen alternatives exist; exhaustion is explained when it does not.
@@ -148,20 +148,20 @@ Persistent identity, saves, and feedback remain in scope because they support th
 15. A public demo can complete onboarding, recommendation, feedback, and return-session flows using only verified free/no-card services. Secrets and private user data are protected as specified.
 16. Adding a second city fixture through configuration and catalog data requires no change to ranking logic; public launch coverage remains Carmel, Indiana.
 
-These criteria establish functional behavior. A pilot-user measure of recommendation usefulness, catalog minimum, and latency target remain unresolved; ranking unit tests alone do not prove users like the recommendations.
+These criteria establish functional behavior. The release target is five reviewed restaurants and 25 offerings; the pilot target is at least three of five participants identifying a dish they would consider trying. The warm recommendation API target is p95 at or below three seconds, with cold starts reported separately. These are targets, not observed results.
 
 ## Unresolved questions
 
-1. Which areas of Carmel and initial number of restaurants/dishes define the demo catalog? Is manual review of a curated seed acceptable?
-2. What authentication method should the public demo use, and at what point is login required? Can users try an anonymous first session before account creation?
+1. Can additional reviewed central Carmel sources meet the five-restaurant/25-offering public release gate? The current permitted factual sample has six offerings from two restaurants; Fork's third-party menu remains on hold.
+2. Can the external Google OAuth app be published for the public demo with a compliant no-cost homepage/domain and privacy policy, without billing? Account-level configuration succeeded without a card, but production publication and sign-in are untested. If they fail, record a new provider or scope decision before public auth release.
 3. What existing hardware is available for local enrichment, and which embedding model fits it?
 4. Does lightweight FastAPI fit the selected host's current free limits? Confirm with a deployment feasibility check before committing hosting configuration.
-5. Should manual location input use preset areas within Carmel, an address lookup service, or another method? What is the default radius, and may users change it?
-6. Which dietary restrictions are supported, what source evidence qualifies a dish, and how should unknown information be handled? Allergies cannot be guaranteed by menu inference.
-7. Is price solely a ranking preference or also an optional hard cap? How should unknown prices behave under a cap?
+5. Confirm exact preset coordinates and configured central Carmel coverage in Spec 02 against reviewed geographic evidence. Manual presets and 1/3/5-mile radii are accepted.
+6. Dietary filters are deferred from V1. What evidence and unknown-data policy would a later dietary-filter feature require?
+7. Price is a ranking preference only in V1; whether a future hard cap is useful remains a later decision.
 8. What initial weights apply to likes, dislikes, saves, clicks, novelty, and distance? Are dislikes treated as persistent exclusion of the exact offering or only a ranking penalty?
-9. How often should menus be refreshed, and when is an old offering withheld from recommendations?
-10. What small pilot, usefulness measure, latency target, and completion date will define a successful V1 beyond functional acceptance?
+9. Recheck reviewed offerings every 30 days and withhold older ones until verified. The exact operator schedule and source-specific exceptions will be confirmed during ingestion work.
+10. The five-person pilot and p95 warm-response target are accepted. A calendar completion date remains unset until pilot recruitment.
 
 ## Feasibility references
 

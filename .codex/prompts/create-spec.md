@@ -141,8 +141,9 @@ Always include:
 - V1 must remain deployable and usable at $0/month.
 - No paid APIs/services for core functionality.
 - Desktop web only for V1.
-- Initial launch region: Indianapolis, Indiana.
+- Initial launch coverage: central Carmel, Indiana (Midtown and Arts & Design District).
 - Dish recommendations are primary; restaurants are where users obtain them.
+- V1 has no dietary exclusion filter; never claim allergy safety from menu attributes.
 - Core MVP flow: craving + location → 3–5 dish recommendations → user feedback.
 - Like, Dislike, and Save where relevant.
 - Persist personalization across sessions when applicable.
