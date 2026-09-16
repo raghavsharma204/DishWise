@@ -1,6 +1,6 @@
 # MVP Architecture Proposal
 
-Status: Proposed architecture with Setup A complete and decisions in `docs/decisions.md`; no application implementation or deployment has been executed. Account-level Google/Supabase OAuth setup succeeded without a card, while public publication and sign-in remain unverified. The reviewed factual sample is below the public launch catalog gate.
+Status: Proposed architecture with Setup A complete and decisions in `docs/decisions.md`. Setup B implements only local frontend/backend health and disposable database setup; no product feature or deployment has been executed. Account-level Google/Supabase OAuth setup succeeded without a card, while public publication and sign-in remain unverified. The reviewed factual sample is below the public launch catalog gate.
 
 Launch region: Carmel, Indiana. This proposal follows PROJECT_SPEC.md and preserves the ability to add cities through data and configuration.
 
@@ -31,7 +31,7 @@ React manages interactive controls; Next.js organizes pages and builds the appli
 
 The browser collects the craving and location, displays results, and sends feedback to FastAPI. Keep recommendation decisions in the backend so the same rules can eventually serve a mobile interface. V1 targets desktop and laptop screens only.
 
-For location, use **Midtown and Arts & Design District presets** with approximate reference points. The default radius is 3 miles, with 1- and 5-mile choices, applied only to the curated central Carmel catalog and configured coverage. Browser geolocation and address search are unnecessary for V1. Confirm exact preset coordinates in Spec 02. Label area-based distances approximate and link to restaurant locations externally.
+For location, use **Midtown and Arts & Design District presets** with approximate reference points. The default radius is 3 miles, with 1- and 5-mile choices, applied only to the curated central Carmel catalog and configured coverage. Browser geolocation and address search are unnecessary for V1. Confirm exact preset coordinates in Spec 03. Label area-based distances approximate and link to restaurant locations externally.
 
 ## Backend
 
@@ -104,7 +104,7 @@ A general-purpose menu crawler is unnecessary for V1. A small, reviewed catalog 
 
 Use Supabase Auth with **one social login provider**. OAuth means the provider handles sign-in and Supabase establishes the app session; the application does not collect that provider's password.
 
-Google sign-in is the selected target. A dedicated Google project without billing and a Supabase Free project have an OAuth web client and enabled Google provider. The External Google app remains in Testing; public publication needs an app homepage, privacy policy, final origins, and an eligibility check in Setup B. A real sign-in and callback remain for Spec 08. This is separate from Google Maps. [Google integration](https://supabase.com/docs/guides/auth/social-login/auth-google), [Google branding requirements](https://support.google.com/cloud/answer/15549049?hl=en)
+Google sign-in is the selected target. A dedicated Google project without billing and a Supabase Free project have an OAuth web client and enabled Google provider. The External Google app remains in Testing; public publication needs an app homepage, privacy policy, final origins, and an eligibility check in Setup C. A real sign-in and callback remain for Spec 12. This is separate from Google Maps. [Google integration](https://supabase.com/docs/guides/auth/social-login/auth-google), [Google branding requirements](https://support.google.com/cloud/answer/15549049?hl=en)
 
 Allow the first recommendations using temporary onboarding answers. Ask users to sign in when they want to preserve their profile or feedback, then save those answers to their account without overwriting an existing returning profile. No anonymous account merging is needed. Guest-first timing is an accepted product decision.
 

@@ -1,6 +1,6 @@
 # Dish Recommendation App — Project Specification
 
-Status: V1 scope with Setup A complete and decisions recorded in `docs/decisions.md`. A six-offering real factual sample exists; dedicated Google/Supabase account-level OAuth setup succeeded without a card. Public OAuth publication and sign-in remain unverified; no application implementation is included.
+Status: V1 scope with Setup A complete and decisions recorded in `docs/decisions.md`. Setup B adds a local frontend, FastAPI health check, and disposable database workflow; no product feature is implemented. A six-offering factual sample exists, and dedicated Google/Supabase account-level OAuth setup succeeded without a card. Public hosting, OAuth publication, and sign-in remain unverified.
 
 ## Problem statement
 
@@ -156,7 +156,7 @@ These criteria establish functional behavior. The release target is five reviewe
 2. Can the external Google OAuth app be published for the public demo with a compliant no-cost homepage/domain and privacy policy, without billing? Account-level configuration succeeded without a card, but production publication and sign-in are untested. If they fail, record a new provider or scope decision before public auth release.
 3. What existing hardware is available for local enrichment, and which embedding model fits it?
 4. Does lightweight FastAPI fit the selected host's current free limits? Confirm with a deployment feasibility check before committing hosting configuration.
-5. Confirm exact preset coordinates and configured central Carmel coverage in Spec 02 against reviewed geographic evidence. Manual presets and 1/3/5-mile radii are accepted.
+5. Confirm exact preset coordinates and configured central Carmel coverage in Spec 03 against reviewed geographic evidence. Manual presets and 1/3/5-mile radii are accepted.
 6. Dietary filters are deferred from V1. What evidence and unknown-data policy would a later dietary-filter feature require?
 7. Price is a ranking preference only in V1; whether a future hard cap is useful remains a later decision.
 8. What initial weights apply to likes, dislikes, saves, clicks, novelty, and distance? Are dislikes treated as persistent exclusion of the exact offering or only a ranking penalty?

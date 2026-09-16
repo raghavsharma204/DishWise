@@ -18,7 +18,7 @@ Recorded 2026-09-16 by the project team from the founder's choices and stated pl
 
 | Decision | Accepted choice | Reason / remaining validation |
 |---|---|---|
-| Location | Manual selector with two named presets: Midtown (39.9757552, -86.1289362) and Arts & Design District (39.9786375, -86.1259628). | These are the audited OSM positions of Fork + Ale House and Woody's respectively, selected as approximate area reference points rather than geographic district centers. Recheck them in Spec 02 before shipping. No address lookup service is needed. |
+| Location | Manual selector with two named presets: Midtown (39.9757552, -86.1289362) and Arts & Design District (39.9786375, -86.1259628). | These are the audited OSM positions of Fork + Ale House and Woody's respectively, selected as approximate area reference points rather than geographic district centers. Recheck them in Spec 03 before shipping. No address lookup service is needed. |
 | Radius | 3 miles by default; selectable 1, 3, or 5 miles. | Search only the curated central Carmel catalog, intersected with supported Carmel coverage. A larger radius never implies catalog coverage beyond it. |
 | Geolocation | Not required for V1; manual presets always work. | Denied or unavailable browser location cannot block recommendations. Outside-coverage coordinates, if accepted in a later version, show the supported-area selector. |
 | Identity | Allow temporary onboarding and first results without login. Prompt for sign-in when the user wants to preserve profile or feedback. | Do not create an anonymous account or overwrite an existing returning profile. |
@@ -41,7 +41,7 @@ Persistent profile answers remain separate from the current craving. Supported t
 
 - Recruit five pilot participants after a usable catalog and flow exist. Success target: at least three identify one recommended dish they would consider trying. This is a target, not observed performance.
 - Warm-response target: p95 at or below three seconds for the recommendation API, measured separately from cold starts. Record environment, request count, catalog size, and measured results during release validation.
-- This machine is a MacBook Air with Apple M2 and 16 GB memory, observed locally on 2026-09-16. Model choice and a real enrichment smoke test belong to Spec 19. No local machine is needed at request time.
+- This machine is a MacBook Air with Apple M2 and 16 GB memory, observed locally on 2026-09-16. Model choice and a real enrichment smoke test belong to Spec 29. No local machine is needed at request time.
 - No calendar completion date was agreed. Set one before pilot recruitment; do not present an invented date as a commitment.
 
 ## Source audit outcome and gate
@@ -52,7 +52,7 @@ The three audited candidates are in [the source audit](../data/source_audit.csv)
 
 On 2026-09-16, the project owner authorized a dedicated Google Cloud project (`dish-recommendation-app-508822`) and Supabase Free organization/project (`dish-rec-demo`, project reference `abehzlrtdeelorteywrb`). The Google project was created with **no linked billing account**. Its Google Auth Platform accepted an External audience and created a Web OAuth client with the Supabase callback URL. Supabase shows the organization on the Free plan, the project healthy, and Google sign-in enabled with that client. The first client secret was replaced and disabled; the active replacement was supplied to Supabase and was never written to this repository. No card, paid plan, or billing link was requested during these account-level steps.
 
-**Setup A scope decision:** This account-level check settles whether the selected Google/Supabase path can be configured without a card. A full public OAuth sign-in cannot be tested while the application and public site do not exist. Google's Audience page remains in Testing and its Publish button is disabled pending Branding links. [Google requires a public app homepage and privacy policy for an external production app](https://support.google.com/cloud/answer/15549049?hl=en); [Supabase's Google guide](https://supabase.com/docs/guides/auth/social-login/auth-google) also requires the final application origin. Setup B must establish the public site/URLs and verify the no-card publication path before Spec 08 starts. Spec 08 must then test a real sign-in and callback before release. If publication requires billing or cannot use an eligible no-cost site/domain, record a new provider or scope decision. Do not claim public OAuth or acceptance criterion 15 is verified yet. No OAuth secret or database password is recorded here.
+**Setup A scope decision:** This account-level check settles whether the selected Google/Supabase path can be configured without a card. A full public OAuth sign-in cannot be tested until the public site exists. Google's Audience page remains in Testing and its Publish button is disabled pending Branding links. [Google requires a public app homepage and privacy policy for an external production app](https://support.google.com/cloud/answer/15549049?hl=en); [Supabase's Google guide](https://supabase.com/docs/guides/auth/social-login/auth-google) also requires the final application origin. Setup C must establish the public site/URLs and verify the no-card publication path before Spec 12 starts. Spec 12 must then test a real sign-in and callback before release. If publication requires billing or cannot use an eligible no-cost site/domain, record a new provider or scope decision. Do not claim public OAuth or acceptance criterion 15 is verified yet. No OAuth secret or database password is recorded here.
 
 ## Manual walkthroughs
 
@@ -63,4 +63,4 @@ On 2026-09-16, the project owner authorized a dedicated Google Cloud project (`d
 - **Outside coverage:** show the supported central Carmel presets; never fabricate distance or results outside the configured area.
 - **Sparse catalog:** show zero to two eligible offerings as available with an honest coverage message; do not fill to three with invented dishes.
 
-These are documented scenarios, not executed UI tests; the application does not exist yet.
+These are documented product scenarios, not executed product UI tests. Setup B provides only a local health-check page.
