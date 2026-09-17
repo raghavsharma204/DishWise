@@ -1,6 +1,6 @@
-# DishWise local setup
+# DishWise preview and local setup
 
-Setup B runs a small local connection check. The page does not contain dishes, recommendations, or sign-in. The API health response reports only that FastAPI is serving requests.
+The [public preview](https://dishwise-web.vercel.app/) has a privacy policy and an API connection check. It does not contain dishes, recommendations, or sign-in. The API health response reports only that FastAPI is serving requests. Setup C hosting and Google OAuth publication checks passed; see [hosting evidence](docs/hosting_check.md) and the [deployment procedure](docs/deployment.md). A real sign-in remains Spec 12.
 
 ## Requirements
 
@@ -36,7 +36,7 @@ cd frontend
 npm run dev
 ```
 
-Open `http://localhost:3000`. It checks `http://127.0.0.1:8000/health`. Stop the backend to see the unavailable state; restart it and use **Retry check** to recover. `GET /health` returns `{"status":"ok"}` and does not call the database. The backend permits cross-origin browser reads from `http://localhost:3000` by default.
+Open `http://localhost:3000`. It checks `http://127.0.0.1:8000/health` and links to `/privacy`. Stop the backend to see the unavailable state; restart it and use **Retry check** to recover. `GET /health` returns `{"status":"ok"}` and does not call the database. The backend permits cross-origin browser reads from `http://localhost:3000` by default. The preview does not expose the FastAPI documentation routes.
 
 ## Verify code
 

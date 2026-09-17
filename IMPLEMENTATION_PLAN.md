@@ -4,17 +4,17 @@
 
 ## Current and next work
 
-**Current:** Setup B — Local application setup is complete. A local Next.js page checks FastAPI health, and a disposable local Supabase PostgreSQL connection was verified. No product feature or deployment is complete.
+**Current:** Setup C — Free-hosting verification is complete. The minimal public preview and health API are deployed on Vercel Hobby, and Google's External OAuth app is in production. No product feature or real sign-in is complete.
 
-**Next ready work:** Setup C — Free-hosting verification, or Spec 01 — Display stored dish cards. Their explicit dependencies determine execution order. Public OAuth publication and real sign-in remain unverified.
+**Next ready work:** Spec 01 — Display stored dish cards is ready by its explicit dependency. Spec 12 — Sign in and sign out may begin from Setup C's public URLs, but must verify a real callback and session. The catalog release gate remains unmet.
 
-This revision replaces the previous 21-spec roadmap with the 31 single-feature specs approved in conversation. These are the authoritative feature IDs; product acceptance-criterion numbers are separate. Setup B now has a local application implementation; the numbered product features and public deployment remain unstarted. Resolve historical references through the migration table below. Do not reset completed setup work.
+This revision replaces the previous 21-spec roadmap with the 31 single-feature specs approved in conversation. These are the authoritative feature IDs; product acceptance-criterion numbers are separate. Setups B and C have local and minimal public infrastructure; numbered product features remain unstarted. Resolve historical references through the migration table below. Do not reset completed setup work.
 
 | ID | Feature / task | Status |
 |---|---|---|
 | Setup A | Validate catalog and decide the first experience | Complete: account-level no-card OAuth verified; public sign-in remains a later gate |
 | Setup B | Local application setup | Complete: local health flow and disposable database verified |
-| Setup C | Free-hosting verification | Not started |
+| Setup C | Free-hosting verification | Complete: public preview/API, no-card Hobby deployment, Google External production publication; real sign-in is Spec 12 |
 | Spec 01 | Display stored dish cards | Not started |
 | Spec 02 | Open restaurant information | Not started |
 | Spec 03 | Select a Carmel location | Not started |
