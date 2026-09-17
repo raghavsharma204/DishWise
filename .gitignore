@@ -12,6 +12,8 @@ __pycache__/
 .ruff_cache/
 *.pyc
 *.tsbuildinfo
+frontend/test-results/
+frontend/playwright-report/
 supabase/.branches/
 supabase/.profiles/
 supabase/.temp/

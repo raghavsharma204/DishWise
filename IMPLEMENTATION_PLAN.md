@@ -1,21 +1,21 @@
 # Single-feature Implementation Plan
 
-[PROJECT_SPEC.md](PROJECT_SPEC.md) defines product requirements, [ARCHITECTURE.md](ARCHITECTURE.md) proposes the architecture, and [docs/decisions.md](docs/decisions.md) records accepted choices. This roadmap defines independently reviewable implementation units and tracks progress. Setup B local application infrastructure is implemented; numbered product features have not started.
+[PROJECT_SPEC.md](PROJECT_SPEC.md) defines product requirements, [ARCHITECTURE.md](ARCHITECTURE.md) proposes the architecture, and [docs/decisions.md](docs/decisions.md) records accepted choices. This roadmap defines independently reviewable implementation units and tracks progress. Setups A–C and the local Spec 01 catalog-card slice are complete; public product flows remain unimplemented.
 
 ## Current and next work
 
-**Current:** Setup C — Free-hosting verification is complete. The minimal public preview and health API are deployed on Vercel Hobby, and Google's External OAuth app is in production. No product feature or real sign-in is complete.
+**Current:** Spec 01 — Display stored dish cards is complete locally. The public preview still exposes only the minimal site and health API; no recommendation feature or real sign-in is complete.
 
-**Next ready work:** Spec 01 — Display stored dish cards is ready by its explicit dependency. Spec 12 — Sign in and sign out may begin from Setup C's public URLs, but must verify a real callback and session. The catalog release gate remains unmet.
+**Next ready work:** Specs 02, 03, and 06 may begin from Spec 01 by their explicit dependencies. Spec 12 may begin from Setup C's public URLs, but must verify a real callback and session. The catalog release gate remains unmet.
 
-This revision replaces the previous 21-spec roadmap with the 31 single-feature specs approved in conversation. These are the authoritative feature IDs; product acceptance-criterion numbers are separate. Setups B and C have local and minimal public infrastructure; numbered product features remain unstarted. Resolve historical references through the migration table below. Do not reset completed setup work.
+This revision replaces the previous 21-spec roadmap with the 31 single-feature specs approved in conversation. These are the authoritative feature IDs; product acceptance-criterion numbers are separate. Setups B and C have local and minimal public infrastructure, and Spec 01 is a local development view. Resolve historical references through the migration table below. Do not reset completed setup work.
 
 | ID | Feature / task | Status |
 |---|---|---|
 | Setup A | Validate catalog and decide the first experience | Complete: account-level no-card OAuth verified; public sign-in remains a later gate |
 | Setup B | Local application setup | Complete: local health flow and disposable database verified |
 | Setup C | Free-hosting verification | Complete: public preview/API, no-card Hobby deployment, Google External production publication; real sign-in is Spec 12 |
-| Spec 01 | Display stored dish cards | Not started |
+| Spec 01 | Display stored dish cards | Complete locally: stored fixture cards, read-only API, and production route gate verified |
 | Spec 02 | Open restaurant information | Not started |
 | Spec 03 | Select a Carmel location | Not started |
 | Spec 04 | Select a search radius | Not started |
@@ -107,6 +107,8 @@ This revision replaces the previous 21-spec roadmap with the 31 single-feature s
 
 **Depends on:** Setup B.
 
+**Status:** Complete locally on 2026-09-17. The public product remains unreleased.
+
 **Result:** A local fixture page loads stored offerings through FastAPI and displays dish cards.
 
 **Likely files:** `supabase/migrations/*_catalog.sql`, `backend/app/repositories/catalog.py`, `backend/app/routes/dishes.py`, `frontend/components/DishCard.tsx`, `frontend/app/dev/dishes/page.tsx`, `backend/tests/integration/test_catalog.py`, `frontend/tests/e2e/dish-cards.spec.ts`.
@@ -114,6 +116,8 @@ This revision replaces the previous 21-spec roadmap with the 31 single-feature s
 **Acceptance criteria:** Store configurable cities/coverage, stable restaurant/offering IDs, source and verification metadata, provenance, nullable prices and variants, and status. Display known fields and explicit unknowns. Label synthetic fixtures; allow only approved public read fields and reject public writes. This is a development view, not recommendations.
 
 **Tests:** Fixture round trips, foreign keys, duplicate names across restaurants, variants, missing fields, unsafe text/source links, rejected writes, loading/empty/error rendering, and second-city fixtures.
+
+**Verification (2026-09-17):** Supabase `db reset --local --no-seed` applied the migration to an unlinked disposable database. With a read-only local role, 11 backend tests passed, including fixture round trips, foreign keys, duplicate names, bounded reads, and denied writes. Five Playwright checks passed at 1280×800 and 1440×900 and for loading, empty, error/retry, malformed data, unsafe text, and safe links. TypeScript and the webpack production build passed. A real local browser request rendered four database-backed fixture cards without horizontal overflow; production `/dev/dishes` returned 404. No public catalog endpoint or recommendation was deployed. The six-offering factual sample remains below the launch gate.
 
 ## Spec 02 — Open restaurant information
 

@@ -1,6 +1,6 @@
 # Dish Recommendation App — Project Specification
 
-Status: V1 scope with Setups A–C complete and decisions recorded in `docs/decisions.md`. Setup C deployed only a public preview and FastAPI health check, and the Google External OAuth app is in production without a card. No product feature or real sign-in is implemented. The six-offering factual sample remains below the public launch gate.
+Status: V1 scope with Setups A–C and local Spec 01 complete and decisions recorded in `docs/decisions.md`. Setup C deployed only a public preview and FastAPI health check, and the Google External OAuth app is in production without a card. Spec 01 displays synthetic stored catalog cards locally; no recommendation flow or real sign-in is implemented. The six-offering factual sample remains below the public launch gate.
 
 ## Problem statement
 

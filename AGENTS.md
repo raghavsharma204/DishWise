@@ -2,7 +2,7 @@
 
 ## Project state
 
-- Setups A–C are complete. Setup B provides local frontend, backend health, and disposable database workflows; Setup C deployed only a public preview and health endpoint and published the Google External OAuth app. No product feature, catalog schema, or real sign-in is implemented yet. The launch catalog remains unverified. Inspect the tracker and recorded evidence before claiming feature or deployment readiness.
+- Setups A–C and local Spec 01 are complete. Setup B provides local frontend, backend health, and disposable database workflows; Setup C deployed only a public preview and health endpoint and published the Google External OAuth app. Spec 01 adds a local synthetic catalog schema and card view; no recommendation flow or real sign-in is implemented yet. The launch catalog remains unverified. Inspect the tracker and recorded evidence before claiming feature or deployment readiness.
 - Treat [PROJECT_SPEC.md](PROJECT_SPEC.md) as the product and acceptance authority, [ARCHITECTURE.md](ARCHITECTURE.md) as the current architecture proposal, and [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) as the numbered feature-spec roadmap, progress tracker, and testing guide.
 - Use [brainstorm.md](brainstorm.md) for future ideas and product context, not as a source of committed V1 requirements.
 - When a plan conflicts with an implementation decision, record the decision and update the relevant documentation rather than silently choosing a default.
