@@ -1,6 +1,6 @@
 # Dish Recommendation App — Project Specification
 
-Status: V1 scope with Setup A complete and decisions recorded in `docs/decisions.md`. Setup B adds a local frontend, FastAPI health check, and disposable database workflow; no product feature is implemented. A six-offering factual sample exists, and dedicated Google/Supabase account-level OAuth setup succeeded without a card. Public hosting, OAuth publication, and sign-in remain unverified.
+Status: V1 scope with Setups A–C complete and decisions recorded in `docs/decisions.md`. Setup C deployed only a public preview and FastAPI health check, and the Google External OAuth app is in production without a card. No product feature or real sign-in is implemented. The six-offering factual sample remains below the public launch gate.
 
 ## Problem statement
 
@@ -32,7 +32,7 @@ Carmel, Indiana is the launch city, not a promise of comprehensive restaurant co
 
 ### Onboarding and identity
 
-- Supabase authentication targeted to Google OAuth. Dedicated account-level setup succeeded without a card; public publication and sign-in remain release gates after a public app homepage, privacy policy, and final URLs exist. Guests can see first results before signing in; sign-in preserves preferences and feedback.
+- Supabase authentication targeted to Google OAuth. Account setup and Google External production publication succeeded without a card; a real sign-in and callback remain release gates in Spec 12. Guests can see first results before signing in; sign-in preserves preferences and feedback.
 - At most five quick questions covering cuisine preferences, spice tolerance, price sensitivity, and adventurousness. V1 has no dietary exclusion question or filter.
 - Store the onboarding profile in the database and allow basic preference edits.
 - Persist identity, profile, feedback, saves, and relevant recommendation interactions across sessions after sign-in. First results are available to guests using temporary answers.
@@ -110,7 +110,7 @@ Carmel, Indiana is the launch city, not a promise of comprehensive restaurant co
 ## Deployment requirements
 
 - One publicly accessible deployment on provider-issued URL(s), for portfolio/demo use.
-- Vercel Hobby is the preferred frontend host. FastAPI hosting is provisional: evaluate a lightweight Vercel Python deployment first, or another verified free/no-card host if needed.
+- The minimal Next.js frontend and FastAPI health endpoint deployed on two Vercel Hobby projects within the observed free/no-card path. Recheck suitability when later API dependencies and request traffic exist.
 - Supabase hosts the database and authentication on its free tier.
 - No custom domain, separate staging environment, advanced analytics, monitoring platform, or enterprise availability target.
 - Cold starts, free-tier quotas, and manual recovery from service pausing are acceptable demo limitations; failures should produce useful messages.
@@ -153,9 +153,9 @@ These criteria establish functional behavior. The release target is five reviewe
 ## Unresolved questions
 
 1. Can additional reviewed central Carmel sources meet the five-restaurant/25-offering public release gate? The current permitted factual sample has six offerings from two restaurants; Fork's third-party menu remains on hold.
-2. Can the external Google OAuth app be published for the public demo with a compliant no-cost homepage/domain and privacy policy, without billing? Account-level configuration succeeded without a card, but production publication and sign-in are untested. If they fail, record a new provider or scope decision before public auth release.
+2. Can Spec 12 complete a real public Google/Supabase sign-in and callback with the final URLs? Setup C confirmed External production publication without billing, but no session flow has been tested. Resolve any future scope/domain verification requirement before public auth release.
 3. What existing hardware is available for local enrichment, and which embedding model fits it?
-4. Does lightweight FastAPI fit the selected host's current free limits? Confirm with a deployment feasibility check before committing hosting configuration.
+4. Will the later product API and its dependencies fit the selected host's current free limits and latency target? Setup C verified only the lightweight health deployment.
 5. Confirm exact preset coordinates and configured central Carmel coverage in Spec 03 against reviewed geographic evidence. Manual presets and 1/3/5-mile radii are accepted.
 6. Dietary filters are deferred from V1. What evidence and unknown-data policy would a later dietary-filter feature require?
 7. Price is a ranking preference only in V1; whether a future hard cap is useful remains a later decision.

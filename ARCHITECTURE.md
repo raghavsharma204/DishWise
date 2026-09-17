@@ -1,6 +1,6 @@
 # MVP Architecture Proposal
 
-Status: Proposed architecture with Setup A complete and decisions in `docs/decisions.md`. Setup B implements only local frontend/backend health and disposable database setup; no product feature or deployment has been executed. Account-level Google/Supabase OAuth setup succeeded without a card, while public publication and sign-in remain unverified. The reviewed factual sample is below the public launch catalog gate.
+Status: Proposed product architecture with Setups A–C complete and decisions in `docs/decisions.md`. The minimal frontend and FastAPI health endpoint are publicly deployed on Vercel Hobby; no product feature is deployed. Google External OAuth publication succeeded without a card, while real sign-in remains unverified. The reviewed factual sample is below the public launch catalog gate.
 
 Launch region: Carmel, Indiana. This proposal follows PROJECT_SPEC.md and preserves the ability to add cities through data and configuration.
 
@@ -104,7 +104,7 @@ A general-purpose menu crawler is unnecessary for V1. A small, reviewed catalog 
 
 Use Supabase Auth with **one social login provider**. OAuth means the provider handles sign-in and Supabase establishes the app session; the application does not collect that provider's password.
 
-Google sign-in is the selected target. A dedicated Google project without billing and a Supabase Free project have an OAuth web client and enabled Google provider. The External Google app remains in Testing; public publication needs an app homepage, privacy policy, final origins, and an eligibility check in Setup C. A real sign-in and callback remain for Spec 12. This is separate from Google Maps. [Google integration](https://supabase.com/docs/guides/auth/social-login/auth-google), [Google branding requirements](https://support.google.com/cloud/answer/15549049?hl=en)
+Google sign-in is the selected target. A dedicated Google project without billing and a Supabase Free project have an OAuth web client and enabled Google provider. Setup C published the External Google app after the public homepage, privacy page, and authorized domain were accepted. Supabase's Site URL now points to the public preview. A real sign-in and callback remain for Spec 12. This is separate from Google Maps. [Google integration](https://supabase.com/docs/guides/auth/social-login/auth-google), [Google branding requirements](https://support.google.com/cloud/answer/15549049?hl=en)
 
 Allow the first recommendations using temporary onboarding answers. Ask users to sign in when they want to preserve their profile or feedback, then save those answers to their account without overwriting an existing returning profile. No anonymous account merging is needed. Guest-first timing is an accepted product decision.
 
@@ -152,8 +152,8 @@ Provider pricing, eligibility, and limits must be rechecked before deployment. D
 
 ## Recommended decision and remaining checks
 
-Choose **Option 1**, subject to a small FastAPI deployment check before building the full application. Its request-only backend fits the scoring approach, and keeping data preparation local makes heavy Python hosting unnecessary.
+Choose **Option 1**. Setup C confirmed a small FastAPI health deployment on Vercel Hobby. Recheck function size, limits, and latency as product dependencies are added; keeping data preparation local avoids heavy Python request dependencies.
 
 Choose Option 2 if conventional Python hosting becomes materially easier for the dependencies and its wake-up delay is acceptable.
 
-The first technical uncertainty is obtaining enough reviewed central Carmel offerings. The current factual sample has six offerings from two restaurants; the launch target is five restaurants and 25 reviewed offerings, with a 30-day reverification policy. Provider account eligibility, hosting feasibility, and later ranking weights remain open checks in `PROJECT_SPEC.md` and `docs/decisions.md`.
+The first product uncertainty is obtaining enough reviewed central Carmel offerings. The current factual sample has six offerings from two restaurants; the launch target is five restaurants and 25 reviewed offerings, with a 30-day reverification policy. Real sign-in, later API hosting fit, and ranking weights remain open checks in `PROJECT_SPEC.md` and `docs/decisions.md`.
