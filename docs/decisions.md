@@ -60,6 +60,12 @@ Use two Vercel Hobby projects on provider-issued URLs for the minimal public pre
 
 The project owner approved Google Branding and External publication. Google accepted the public `dishwise-web.vercel.app` homepage, privacy page, and authorized domain, and its Audience now shows **In production**. Supabase Auth Site URL was set to `https://dishwise-web.vercel.app` with the owner's approval. This establishes a public no-card publication path for the current configuration. No sign-in UI, redirect allowlist, callback handling, or session test exists yet; Spec 12 owns those and acceptance criterion 15 remains incomplete. Recheck any future verification requirement if scopes or branding change.
 
+## Spec 01 local catalog boundary — 2026-09-17
+
+The development card view reads the disposable local PostgreSQL catalog through FastAPI with a dedicated read-only `catalog_reader` role, RLS read policies, and an allowlisted response. Its password is generated into an ignored local environment file. The synthetic fixture includes provisional GeoJSON coverage polygons solely to exercise the configurable schema; Spec 03 still owns verification of real Carmel coverage and preset coordinates. The local `/dev/dishes` view and `/api/dev/dishes` route are unavailable on the deployed preview. This decision does not establish a public database access pattern or catalog release readiness. The frontend production build uses Next.js's supported webpack path after Turbopack's CSS worker hit a local port-bind failure.
+
+**Local preview correction (2026-09-17):** The owner preferred the six reviewed Carmel offering names and prices over the four synthetic fixture dishes in the visible local preview. A fixed local-only loader now copies exactly the permitted factual sample from `data/samples/carmel_offerings.json`; synthetic fixtures remain for deterministic tests. Josephine has no verified coordinates in the audit, and the sample's central Carmel boundary has not been verified, so both remain null until location work. The Josephine row in `data/source_audit.csv` was corrected to align its existing values with the CSV header. Cards emphasize the known facts and group unknown details compactly. This change does not expand the reviewed sample or satisfy the public catalog gate.
+
 ## Manual walkthroughs
 
 - **Cold start:** guest selects a preset, answers no more than five taste questions, enters a supported craving, corrects parsed criteria, and sees only stored offerings. No explanation refers to prior behavior.

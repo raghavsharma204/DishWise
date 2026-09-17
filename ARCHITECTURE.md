@@ -1,6 +1,6 @@
 # MVP Architecture Proposal
 
-Status: Proposed product architecture with Setups A–C complete and decisions in `docs/decisions.md`. The minimal frontend and FastAPI health endpoint are publicly deployed on Vercel Hobby; no product feature is deployed. Google External OAuth publication succeeded without a card, while real sign-in remains unverified. The reviewed factual sample is below the public launch catalog gate.
+Status: Proposed product architecture with Setups A–C and local Spec 01 complete and decisions in `docs/decisions.md`. The minimal frontend and FastAPI health endpoint are publicly deployed on Vercel Hobby; the catalog card view with the six reviewed sample offerings is local only. Google External OAuth publication succeeded without a card, while real sign-in remains unverified. The sample is below the public launch catalog gate.
 
 Launch region: Carmel, Indiana. This proposal follows PROJECT_SPEC.md and preserves the ability to add cities through data and configuration.
 
