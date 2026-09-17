@@ -43,7 +43,7 @@ def list_dishes() -> list[dict]:
                 select o.id, o.restaurant_id, r.name as restaurant_name, o.name,
                        o.description, o.description_provenance, o.price_amount,
                        o.price_currency, o.price_provenance, o.source_url,
-                       o.verified_at, o.review_status, o.status
+                       o.verified_at, o.review_status, o.status, o.is_synthetic
                   from catalog_offerings o
                   join catalog_restaurants r on r.id = o.restaurant_id
                  order by r.id, o.id
@@ -92,6 +92,7 @@ def list_dishes() -> list[dict]:
             "verified_at": row["verified_at"],
             "review_status": row["review_status"],
             "status": row["status"],
+            "is_synthetic": row["is_synthetic"],
         }
     for variant in variants:
         by_id[variant["offering_id"]]["variants"].append(

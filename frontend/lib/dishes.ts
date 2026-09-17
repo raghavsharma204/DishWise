@@ -14,6 +14,7 @@ export type Dish = {
   verified_at: string | null;
   review_status: "pending" | "reviewed";
   status: "active" | "withdrawn";
+  is_synthetic: boolean;
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -47,7 +48,8 @@ export function isDish(value: unknown): value is Dish {
     (value.source_url === null || typeof value.source_url === "string") &&
     (value.verified_at === null || typeof value.verified_at === "string") &&
     (value.review_status === "pending" || value.review_status === "reviewed") &&
-    (value.status === "active" || value.status === "withdrawn")
+    (value.status === "active" || value.status === "withdrawn") &&
+    typeof value.is_synthetic === "boolean"
   );
 }
 

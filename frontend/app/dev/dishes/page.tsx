@@ -7,11 +7,11 @@ export default function DevDishesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-6 py-10 text-slate-900">
+    <main className="min-h-screen bg-[#faf8f4] px-6 py-10 text-stone-900">
       <div className="mx-auto max-w-5xl">
-        <p className="text-sm font-semibold uppercase tracking-wider text-slate-600">Local development catalog</p>
-        <h1 className="mt-2 text-4xl font-semibold">Stored dish cards</h1>
-        <p className="mb-8 mt-4 max-w-3xl text-slate-700">Synthetic fixture data for checking stored catalog display. These are not recommendations, live menus, or proof of current availability. Food attributes are not allergy guidance.</p>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-800">Local development catalog</p>
+        <h1 className="mt-2 text-4xl font-semibold tracking-tight">Stored dish cards</h1>
+        <p className="mb-8 mt-4 max-w-3xl text-stone-700">A preview of how stored menu facts appear on dish cards.</p>
         <DishCatalog />
       </div>
     </main>

@@ -49,6 +49,7 @@ class Dish(BaseModel):
     verified_at: datetime | None
     review_status: Literal["pending", "reviewed"]
     status: Literal["active", "withdrawn"]
+    is_synthetic: bool
 
 
 class DishList(BaseModel):

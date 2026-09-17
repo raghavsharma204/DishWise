@@ -48,3 +48,5 @@ insert into catalog_attributes (id, offering_id, kind, value, provenance, eviden
   ('test-bistro:noodles:spice', 'test-bistro:noodles', 'spice', 'spicy', 'inferred', null, null),
   ('test-second-city:rice:cuisine', 'test-second-city:rice', 'cuisine', 'fusion',
    'manually_reviewed', 'https://example.com/test-city/menu', '2026-09-17T12:00:00Z');
+
+update catalog_offerings set is_synthetic = true;

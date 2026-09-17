@@ -34,5 +34,17 @@ export default function DishCatalog() {
     </section>
   );
   if (state.dishes.length === 0) return <p role="status">No stored dishes are in this local catalog yet.</p>;
-  return <div className="grid gap-5 lg:grid-cols-2">{state.dishes.map((dish) => <DishCard dish={dish} key={dish.id} />)}</div>;
+  const syntheticCount = state.dishes.filter((dish) => dish.is_synthetic).length;
+  const sampleLabel = syntheticCount === state.dishes.length
+    ? "Synthetic test fixture"
+    : syntheticCount === 0 ? "Reviewed factual sample" : "Mixed local sample";
+  return (
+    <section aria-label="Stored offerings">
+      <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-stone-700">
+        <p className="font-semibold text-amber-950">{sampleLabel} · {state.dishes.length} stored {state.dishes.length === 1 ? "offering" : "offerings"}</p>
+        <p className="mt-1">This is a small catalog preview, not recommendations or a live menu. Menu facts may have changed since the dates shown. Food attributes are not allergy guidance.</p>
+      </div>
+      <div className="grid gap-5 lg:grid-cols-2">{state.dishes.map((dish) => <DishCard dish={dish} key={dish.id} />)}</div>
+    </section>
+  );
 }

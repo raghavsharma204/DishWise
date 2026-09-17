@@ -64,7 +64,7 @@ Do not run `supabase link`, `db push`, or `db reset --linked` as part of this wo
 
 ## Spec 01 local dish cards
 
-This is a development preview with **synthetic test dishes**, not recommendations or a launch catalog. It is available only in local development. The public preview still has only the homepage, privacy page, and API health response.
+This is a development preview of the six previously reviewed Carmel names and prices from two restaurants. It is not a recommendation flow or a launch catalog. Synthetic records remain in tests. The page is available only in local development; the public preview still has only the homepage, privacy page, and API health response.
 
 Start the disposable database and verify that `npm run db:status` reports `linked_project:null` and `127.0.0.1:54322`. The following reset destroys **only that local database** and applies the checked-in migration:
 
@@ -73,11 +73,13 @@ npm run db:start
 ./node_modules/.bin/supabase db reset --local --no-seed
 cd backend
 uv run --locked python scripts/configure_local_reader.py
-cd ..
-docker exec -i supabase_db_dish-rec psql -v ON_ERROR_STOP=1 -U postgres -d postgres < backend/tests/fixtures/catalog.sql
+set -a
+. ./.env.local
+set +a
+uv run --locked python scripts/load_reviewed_sample.py
 ```
 
-The reader setup creates ignored `backend/.env.local` with a random read-only password and local test URL. The fixture file truncates and reloads catalog tables; run it only against the disposable local instance. Never use these commands with a hosted database.
+The reader setup creates ignored `backend/.env.local` with a random read-only password and local test URL. The sample loader replaces the local catalog with only the six factual offerings in `data/samples/carmel_offerings.json`; it does not fetch websites. Josephine's coordinates and the central Carmel extent remain unknown in storage. Both the loader and integration tests change catalog tables, so run them only against the disposable local instance. Never use these commands with a hosted database.
 
 Start the API in one terminal from `backend/`:
 
@@ -111,4 +113,4 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The integration tests reload the synthetic catalog and require the local database. Without `backend/.env.local`, they skip while the unit tests run. Playwright runs a local Next.js server and uses mocked API responses for deterministic card, empty, error, and unsafe-link checks. The production build uses Next.js's supported webpack path because Turbopack's CSS worker failed to bind a local port in this development environment.
+The integration tests reload the synthetic catalog and require the local database. Without `backend/.env.local`, they skip while the unit tests run. After running the backend tests, rerun `uv run --locked python scripts/load_reviewed_sample.py` from `backend/` to restore the reviewed sample for viewing. Playwright runs a local Next.js server and uses mocked API responses for deterministic card, empty, error, and unsafe-link checks. The production build uses Next.js's supported webpack path because Turbopack's CSS worker failed to bind a local port in this development environment.

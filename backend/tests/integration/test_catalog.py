@@ -8,6 +8,7 @@ import psycopg
 import pytest
 
 from app.repositories.catalog import list_dishes
+from scripts.load_reviewed_sample import main as load_reviewed_sample
 
 
 FIXTURE_SQL = Path(__file__).parents[1] / "fixtures" / "catalog.sql"
@@ -34,6 +35,7 @@ def test_fixture_round_trip_and_second_city() -> None:
     assert {dish["restaurant"]["id"] for dish in dishes if dish["name"] == "Noodles"} == {"test-bistro", "test-cafe"}
     assert {dish["restaurant"]["name"] for dish in dishes} == {"Test Bistro", "Test Cafe", "Test City Kitchen"}
     variant_dish = next(dish for dish in dishes if dish["id"] == "test-cafe:noodles")
+    assert all(dish["is_synthetic"] for dish in dishes)
     assert variant_dish["price"] is None
     assert [variant["label"] for variant in variant_dish["variants"]] == ["Large", "Small"]
     assert next(dish for dish in dishes if dish["id"] == "test-bistro:noodles")["attributes"][0]["provenance"] == "inferred"
@@ -66,3 +68,26 @@ def test_catalog_read_is_bounded() -> None:
     finally:
         with psycopg.connect(admin_url) as admin:
             admin.execute("delete from catalog_offerings where id like 'bulk:%'")
+
+
+def test_reviewed_sample_loads_only_recorded_facts() -> None:
+    admin_url = os.environ["TEST_DATABASE_URL"]
+    try:
+        load_reviewed_sample()
+        dishes = list_dishes()
+        assert len(dishes) == 6
+        assert not any(dish["is_synthetic"] for dish in dishes)
+        salad = next(dish for dish in dishes if dish["id"] == "josephine:french-bistro-salad")
+        assert salad["price"] is None
+        assert {(item["label"], item["price"]["amount"]) for item in salad["variants"]} == {
+            ("Small", "8.00"), ("Entree", "14.00")
+        }
+        assert all(dish["description"] is None and dish["attributes"] == [] for dish in dishes)
+        with psycopg.connect(admin_url) as admin:
+            coords = admin.execute(
+                "select latitude, longitude from catalog_restaurants where id = 'josephine'"
+            ).fetchone()
+            assert coords == (None, None)
+    finally:
+        with psycopg.connect(admin_url) as admin:
+            admin.execute(FIXTURE_SQL.read_text())

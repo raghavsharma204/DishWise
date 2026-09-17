@@ -14,6 +14,7 @@ const dish = {
   verified_at: null,
   review_status: "reviewed",
   status: "active",
+  is_synthetic: true,
 };
 
 for (const viewport of [{ width: 1280, height: 800 }, { width: 1440, height: 900 }]) {
@@ -23,8 +24,8 @@ for (const viewport of [{ width: 1280, height: 800 }, { width: 1440, height: 900
     await page.goto("/dev/dishes");
     await expect(page.getByRole("heading", { name: "Stored dish cards" })).toBeVisible();
     await expect(page.getByRole("heading", { name: dish.name })).toBeVisible();
-    await expect(page.getByText("Price unknown")).toBeVisible();
-    await expect(page.getByText("Small: $8.00 (manually reviewed)")).toBeVisible();
+    await expect(page.getByText("Base price unknown")).toBeVisible();
+    await expect(page.getByText("Small: $8.00")).toBeVisible();
     await expect(page.getByText("spice: spicy (inferred, uncertain)")).toBeVisible();
     await expect(page.getByText("Menu source unavailable")).toBeVisible();
     await expect(page.locator("article script")).toHaveCount(0);
@@ -59,5 +60,5 @@ test("shows loading and a safe source link", async ({ page }) => {
   });
   await page.goto("/dev/dishes");
   await expect(page.getByRole("status", { name: "" })).toContainText("Loading stored dishes");
-  await expect(page.getByRole("link", { name: "Menu source" })).toHaveAttribute("href", "https://example.com/menu");
+  await expect(page.getByRole("link", { name: "View menu source" })).toHaveAttribute("href", "https://example.com/menu");
 });

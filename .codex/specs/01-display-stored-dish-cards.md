@@ -1,6 +1,6 @@
 # Spec 01 — Display stored dish cards
 
-Status: Implemented locally on 2026-09-17. See `IMPLEMENTATION_PLAN.md` for measured verification; no public catalog product is deployed.
+Status: Implemented locally on 2026-09-17, with a later local preview correction requested by the owner. The page can show the six reviewed factual offerings; synthetic fixtures remain in tests. See `IMPLEMENTATION_PLAN.md` for measured verification. No public catalog product is deployed.
 
 ## Overview
 
@@ -14,8 +14,8 @@ A diner needs to see what a stored dish offering actually says before the app ca
 
 ## User flow
 
-1. An operator starts the disposable local database, applies the migration, loads clearly labeled synthetic fixture records, and starts the existing local API and frontend using documented commands.
-2. At `/dev/dishes`, a guest sees a loading state, then one card per stored offering with dish name, restaurant, known price or explicit unknown, available basic attributes with provenance, and menu source/last verification details. Variants appear under the same offering card with their own labels and prices. The page identifies its fixture data as synthetic and says it is a catalog preview, not recommendations or proof of availability.
+1. An operator starts the disposable local database, applies the migrations, and loads either the labeled synthetic test fixture or the fixed six-offering reviewed factual sample, then starts the existing local API and frontend using documented commands.
+2. At `/dev/dishes`, a guest sees a loading state, then one card per stored offering with dish name, restaurant, known price or explicit unknown, available basic attributes with provenance, and menu source/last verification details. Variants appear under the same offering card with their own labels and prices. The page labels synthetic records or the reviewed factual sample and says it is a catalog preview, not recommendations or proof of availability.
 3. With no records, show an honest empty catalog message. On database/API failure or malformed response, show an error and keyboard accessible retry. Missing optional facts stay unknown; stale verification is displayed as a date without implying a live menu check.
 4. The existing `/` preview and `/privacy` remain minimal public surfaces. The development page and catalog API are available only in an explicit local development configuration; deployed preview builds must not expose them.
 
@@ -31,7 +31,7 @@ Return one object per offering ID, with restaurant ID/name, nullable description
 ## Database changes
 
 - Create one migration under `supabase/migrations/` for `catalog_cities`, `catalog_coverage_areas`, `catalog_restaurants`, `catalog_offerings`, `catalog_price_variants`, and `catalog_attributes`. IDs are stable text keys, not names; foreign keys link coverage to city, restaurant to city and coverage, and offering/variant/attribute to the owning restaurant or offering. Include uniqueness for restaurant source IDs where present and for variant label per offering. Duplicate offering names across different restaurants are valid.
-- Cities store name and state/country identifiers; coverage areas store a named, configurable geographic extent. Store restaurant coordinates as bounded latitude/longitude and nullable address/cuisine/site/menu fields, plus source identifier/URL and last retrieval time. Do not hardcode Carmel into the table definitions or query; fixtures include a second synthetic city to verify the contract.
+- Cities store name and state/country identifiers; coverage areas store a named, configurable geographic extent when verified. Store restaurant coordinates as a nullable pair of bounded latitude/longitude, plus nullable address/cuisine/site/menu fields, source identifier/URL, and last retrieval time. The reviewed sample has no verified Josephine coordinates or coverage polygon, so those remain null until location work. Do not hardcode Carmel into the table definitions or query; fixtures include a second synthetic city to verify the contract.
 - Offerings store menu name, nullable description and base price/currency, source URL, last verification time, review/status fields, and name/description/price provenance. A missing base price remains null even when variants have prices. Variants store label, amount, currency, and provenance under one offering ID. Attributes store a controlled kind/value, provenance (`sourced`, `manually_reviewed`, or `inferred`), nullable evidence/source reference, and review time. Unknown values are absent or null, never inferred as negative facts. Store a status suitable for later withdrawn/freshness filtering, but this spec does not decide recommendation eligibility.
 - Add foreign keys, positive price checks, valid currency/coordinate checks, nonempty required text, timestamp checks, and indexes on city/coverage, restaurant, offering status/verification, and child foreign keys. Keep schema small; no embedding, auth, feedback, save, or interaction tables yet.
 - Enable RLS on catalog tables and grant the backend a dedicated read-only role with a read policy. Use an allowlisted API response model to limit fields; RLS alone does not restrict columns. Grant no anonymous or browser write access, and do not use a service-role key for this read path. Local fixture loading is an operator action against the disposable database only. Test read-only and rejected-write behavior through both API and database roles. Any later public deployment requires shared request limiting first.
@@ -48,8 +48,8 @@ None. The endpoint lists stored fixture offerings; it does not apply geographic 
 
 ## Data sources
 
-- The runtime source is the stored local PostgreSQL catalog only. The deterministic fixture is synthetic, clearly labeled, and contains Carmel coverage plus a second city, duplicate names across restaurants, missing prices/attributes, and variants. Fixtures carry source/verification and provenance fields without presenting synthetic data as real restaurant facts. Test unsafe links as rejected input and as a controlled malformed API response, rather than seeding them as valid sources.
-- Setup A's `data/samples/carmel_offerings.json` remains a reviewed factual sample and contract reference, not an automatic public seed. Its six offerings from two menus do not satisfy the release gate. No new live menu, Overpass, scraping, OAuth, or model source is introduced.
+- The runtime source is the stored local PostgreSQL catalog only. The deterministic test fixture is synthetic, clearly labeled, and contains Carmel coverage plus a second city, duplicate names across restaurants, missing prices/attributes, and variants. Fixtures carry source/verification and provenance fields without presenting synthetic data as real restaurant facts. Test unsafe links as rejected input and as a controlled malformed API response, rather than seeding them as valid sources.
+- Setup A's `data/samples/carmel_offerings.json` supplies a fixed, local-only factual preview of six previously reviewed offerings from two menus. It is not an automatic public seed and does not satisfy the release gate. No new live menu, Overpass, scraping, OAuth, or model source is introduced.
 
 ## Files to change
 
@@ -66,6 +66,7 @@ None. The endpoint lists stored fixture offerings; it does not apply geographic 
 - `backend/app/repositories/catalog.py` — bounded read query and mapping independent of HTTP.
 - `backend/app/routes/dishes.py` — local-only GET route and allowlisted response contract.
 - `backend/tests/fixtures/catalog.sql` — deterministic disposable-database seed with labeled synthetic records.
+- `backend/scripts/load_reviewed_sample.py` — fixed local-only loader for the six reviewed factual sample offerings.
 - `backend/tests/integration/test_catalog.py` — migration/fixture, contract, and database-role tests against the disposable local database.
 - `backend/tests/test_dishes.py` — focused API success, empty, failure, and rejected-write tests with a controlled repository.
 - `frontend/components/DishCard.tsx` and `frontend/app/dev/dishes/page.tsx` — card and local preview page.

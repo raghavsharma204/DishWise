@@ -21,6 +21,7 @@ def sample_dish() -> dict:
         "verified_at": "2026-09-17T12:00:00Z",
         "review_status": "reviewed",
         "status": "active",
+        "is_synthetic": True,
     }
 
 

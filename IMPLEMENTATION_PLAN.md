@@ -15,7 +15,7 @@ This revision replaces the previous 21-spec roadmap with the 31 single-feature s
 | Setup A | Validate catalog and decide the first experience | Complete: account-level no-card OAuth verified; public sign-in remains a later gate |
 | Setup B | Local application setup | Complete: local health flow and disposable database verified |
 | Setup C | Free-hosting verification | Complete: public preview/API, no-card Hobby deployment, Google External production publication; real sign-in is Spec 12 |
-| Spec 01 | Display stored dish cards | Complete locally: stored fixture cards, read-only API, and production route gate verified |
+| Spec 01 | Display stored dish cards | Complete locally: reviewed sample preview, synthetic tests, read-only API, production route gate verified |
 | Spec 02 | Open restaurant information | Not started |
 | Spec 03 | Select a Carmel location | Not started |
 | Spec 04 | Select a search radius | Not started |
@@ -109,7 +109,7 @@ This revision replaces the previous 21-spec roadmap with the 31 single-feature s
 
 **Status:** Complete locally on 2026-09-17. The public product remains unreleased.
 
-**Result:** A local fixture page loads stored offerings through FastAPI and displays dish cards.
+**Result:** A local page loads stored offerings through FastAPI and displays dish cards. The visible preview can use the six previously reviewed factual sample offerings; synthetic records remain in tests.
 
 **Likely files:** `supabase/migrations/*_catalog.sql`, `backend/app/repositories/catalog.py`, `backend/app/routes/dishes.py`, `frontend/components/DishCard.tsx`, `frontend/app/dev/dishes/page.tsx`, `backend/tests/integration/test_catalog.py`, `frontend/tests/e2e/dish-cards.spec.ts`.
 
@@ -118,6 +118,8 @@ This revision replaces the previous 21-spec roadmap with the 31 single-feature s
 **Tests:** Fixture round trips, foreign keys, duplicate names across restaurants, variants, missing fields, unsafe text/source links, rejected writes, loading/empty/error rendering, and second-city fixtures.
 
 **Verification (2026-09-17):** Supabase `db reset --local --no-seed` applied the migration to an unlinked disposable database. With a read-only local role, 11 backend tests passed, including fixture round trips, foreign keys, duplicate names, bounded reads, and denied writes. Five Playwright checks passed at 1280×800 and 1440×900 and for loading, empty, error/retry, malformed data, unsafe text, and safe links. TypeScript and the webpack production build passed. A real local browser request rendered four database-backed fixture cards without horizontal overflow; production `/dev/dishes` returned 404. No public catalog endpoint or recommendation was deployed. The six-offering factual sample remains below the launch gate.
+
+**Local preview correction (2026-09-17):** The fixed local loader stored the six reviewed names/prices from two restaurants, and a browser check rendered all six cards without horizontal overflow. Twelve backend tests, five Playwright checks, TypeScript, and the production build passed after the correction. Missing descriptions, attributes, Josephine coordinates, and the coverage extent remain unknown. The deterministic synthetic fixture still exercises the data contract. This is not a launch catalog or a deployed product flow.
 
 ## Spec 02 — Open restaurant information
 

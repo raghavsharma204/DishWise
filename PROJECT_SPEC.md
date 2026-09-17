@@ -1,6 +1,6 @@
 # Dish Recommendation App — Project Specification
 
-Status: V1 scope with Setups A–C and local Spec 01 complete and decisions recorded in `docs/decisions.md`. Setup C deployed only a public preview and FastAPI health check, and the Google External OAuth app is in production without a card. Spec 01 displays synthetic stored catalog cards locally; no recommendation flow or real sign-in is implemented. The six-offering factual sample remains below the public launch gate.
+Status: V1 scope with Setups A–C and local Spec 01 complete and decisions recorded in `docs/decisions.md`. Setup C deployed only a public preview and FastAPI health check, and the Google External OAuth app is in production without a card. Spec 01 can display the six reviewed factual sample offerings locally; tests use synthetic fixtures. No recommendation flow or real sign-in is implemented. The sample remains below the public launch gate.
 
 ## Problem statement
 
@@ -71,8 +71,8 @@ Carmel, Indiana is the launch city, not a promise of comprehensive restaurant co
 
 ### Catalog
 
-- City/coverage record: identifier, name, and configured geographic extent.
-- Restaurant: stable internal ID, OSM source ID, city, name, coordinates, available address, cuisine tags, website/menu URL, source, and last retrieval time.
+- City/coverage record: identifier, name, and configured geographic extent when verified. An unverified staging record may leave the extent unknown; it cannot establish location eligibility.
+- Restaurant: stable internal ID, nullable OSM source ID, city, name, verified coordinates when available, available address, cuisine tags, website/menu URL, source, and last retrieval time. Unknown coordinates stay null during review; location-based eligibility must not invent them.
 - Dish offering: stable ID tied to a restaurant, menu name, available description, nullable price and currency, source URL, last verification time, and sourced price variants kept under one offering identity.
 - Dish attributes: available cuisine, ingredients, spice, creaminess, other flavor/texture tags, and dietary information. Preserve whether each attribute is explicitly sourced, manually reviewed, or inferred; allow unknown values.
 - Embedding: vector, model identifier/version, and generation time so vectors can be regenerated consistently.
