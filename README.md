@@ -114,3 +114,9 @@ npm run test:e2e
 ```
 
 The integration tests reload the synthetic catalog and require the local database. Without `backend/.env.local`, they skip while the unit tests run. After running the backend tests, rerun `uv run --locked python scripts/load_reviewed_sample.py` from `backend/` to restore the reviewed sample for viewing. Playwright runs a local Next.js server and uses mocked API responses for deterministic card, empty, error, and unsafe-link checks. The production build uses Next.js's supported webpack path because Turbopack's CSS worker failed to bind a local port in this development environment.
+
+## Spec 02 local restaurant information
+
+Each local dish card has a **Restaurant details** action. It reads `GET /api/dev/restaurants/{restaurant_id}` from the stored catalog and shows the known address, cuisine, source metadata, safe restaurant website, and a coordinate-based OpenStreetMap link when coordinates are present. Missing fields remain explicitly unknown or unavailable. The panel is keyboard accessible and does not claim live hours, availability, or current menu facts. Restaurant details are local-only and are not included in the public preview.
+
+Focused verification uses `uv run --locked pytest`, `npm run typecheck`, `npm run build`, and `npm run test:e2e`. The browser tests mock both catalog endpoints and cover keyboard open/close, safe links, missing fields, loading/error/retry behavior, and 1280×800 / 1440×900 layouts.

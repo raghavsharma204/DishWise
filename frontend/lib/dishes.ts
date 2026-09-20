@@ -69,3 +69,39 @@ export function safeSourceUrl(value: string | null): string | null {
     return null;
   }
 }
+
+export type RestaurantDetails = {
+  id: string;
+  name: string;
+  address: string | null;
+  cuisine_tags: string[];
+  website_url: string | null;
+  source_url: string | null;
+  retrieved_at: string | null;
+  location_url: string | null;
+};
+
+export function parseRestaurantDetails(value: unknown): RestaurantDetails {
+  if (!isRecord(value)
+    || typeof value.id !== "string"
+    || typeof value.name !== "string"
+    || (value.address !== null && typeof value.address !== "string")
+    || !Array.isArray(value.cuisine_tags)
+    || !value.cuisine_tags.every((tag) => typeof tag === "string")
+    || (value.website_url !== null && typeof value.website_url !== "string")
+    || (value.source_url !== null && typeof value.source_url !== "string")
+    || (value.retrieved_at !== null && typeof value.retrieved_at !== "string")
+    || (value.location_url !== null && typeof value.location_url !== "string")) {
+    throw new Error("Invalid restaurant response");
+  }
+  return {
+    id: value.id,
+    name: value.name,
+    address: value.address,
+    cuisine_tags: value.cuisine_tags,
+    website_url: safeSourceUrl(value.website_url),
+    source_url: safeSourceUrl(value.source_url),
+    retrieved_at: value.retrieved_at,
+    location_url: safeSourceUrl(value.location_url),
+  };
+}

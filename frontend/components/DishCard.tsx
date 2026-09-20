@@ -1,4 +1,5 @@
 import { Dish, Price, Provenance, safeSourceUrl } from "@/lib/dishes";
+import RestaurantDetails from "@/components/RestaurantDetails";
 
 function formatPrice(price: Price): string {
   const amount = Number(price.amount);
@@ -89,6 +90,7 @@ export default function DishCard({ dish }: { dish: Dish }) {
               <a className="font-semibold text-amber-900 underline underline-offset-4 hover:text-amber-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-900" href={sourceUrl} target="_blank" rel="noopener noreferrer">View menu source ↗</a>
             ) : <span>Menu source unavailable</span>}
           </div>
+          <RestaurantDetails restaurantId={dish.restaurant.id} />
         </div>
       </div>
     </article>
