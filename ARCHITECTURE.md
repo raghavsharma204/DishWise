@@ -31,7 +31,7 @@ React manages interactive controls; Next.js organizes pages and builds the appli
 
 The browser collects the craving and location, displays results, and sends feedback to FastAPI. Keep recommendation decisions in the backend so the same rules can eventually serve a mobile interface. V1 targets desktop and laptop screens only.
 
-For location, use **Midtown and Arts & Design District presets** with approximate reference points. The default radius is 3 miles, with 1- and 5-mile choices, applied only to the curated central Carmel catalog and configured coverage. Browser geolocation and address search are unnecessary for V1. Confirm exact preset coordinates in Spec 03. Label area-based distances approximate and link to restaurant locations externally.
+For location, use **Midtown (39.9757552, -86.1289362) and Arts & Design District (39.9786375, -86.1259628) presets** as approximate reference points. `data/coverage/carmel.json` stores these with provenance and the owner-approved `central-carmel` operational polygon; the polygon is a product/catalog boundary, not an official district boundary. The default radius is 3 miles, with 1- and 5-mile choices, applied only to the curated central Carmel catalog and configured coverage. Browser geolocation and address search are unnecessary for V1. Calculate distance in FastAPI, label it approximate, and link to restaurant locations externally.
 
 ## Backend
 

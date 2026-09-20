@@ -150,3 +150,34 @@ def get_restaurant(restaurant_id: str) -> dict | None:
         "retrieved_at": row["retrieved_at"],
         "location_url": _location_url(row["latitude"], row["longitude"]),
     }
+
+
+def list_preview_restaurant_coordinates() -> list[dict]:
+    """Return restaurants represented by the same bounded offering preview."""
+    database_url = os.getenv("CATALOG_DATABASE_URL")
+    if not database_url:
+        raise RuntimeError("CATALOG_DATABASE_URL is not configured")
+
+    with psycopg.connect(database_url, row_factory=dict_row, connect_timeout=3) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                with preview_offerings as (
+                  select o.restaurant_id
+                    from catalog_offerings o
+                    join catalog_restaurants r on r.id = o.restaurant_id
+                   order by r.id, o.id
+                   limit %s
+                )
+                select distinct r.id, r.latitude, r.longitude
+                  from catalog_restaurants r
+                  join preview_offerings p on p.restaurant_id = r.id
+                 order by r.id
+                """,
+                (MAX_PREVIEW_DISHES,),
+            )
+            rows = cursor.fetchall()
+    return [
+        {"restaurant_id": row["id"], "latitude": row["latitude"], "longitude": row["longitude"]}
+        for row in rows
+    ]

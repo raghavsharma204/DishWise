@@ -17,7 +17,7 @@ function provenanceText(provenance: Provenance): string {
   return "sourced";
 }
 
-export default function DishCard({ dish }: { dish: Dish }) {
+export default function DishCard({ dish, distance }: { dish: Dish; distance?: { presetLabel: string; miles: number | null } }) {
   const sourceUrl = safeSourceUrl(dish.source_url);
   const verified = dish.verified_at && !Number.isNaN(Date.parse(dish.verified_at))
     ? new Date(dish.verified_at).toLocaleDateString("en-US", { timeZone: "UTC", year: "numeric", month: "short", day: "numeric" })
@@ -75,6 +75,12 @@ export default function DishCard({ dish }: { dish: Dish }) {
         {(!dish.description || dish.attributes.length === 0) && (
           <p className="mt-5 text-xs leading-5 text-stone-500">
             {[!dish.description && "Description", dish.attributes.length === 0 && "Food attributes"].filter(Boolean).join(" and ")} not recorded.
+          </p>
+        )}
+
+        {distance && (
+          <p className="mt-5 text-sm font-medium text-stone-700">
+            Approx. distance from {distance.presetLabel}: {distance.miles === null ? "unknown" : `${distance.miles.toFixed(1)} mi`}
           </p>
         )}
 

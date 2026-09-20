@@ -1,12 +1,12 @@
 # Single-feature Implementation Plan
 
-[PROJECT_SPEC.md](PROJECT_SPEC.md) defines product requirements, [ARCHITECTURE.md](ARCHITECTURE.md) proposes the architecture, and [docs/decisions.md](docs/decisions.md) records accepted choices. This roadmap defines independently reviewable implementation units and tracks progress. Setups A–C and the local Spec 01 catalog-card slice are complete; public product flows remain unimplemented.
+[PROJECT_SPEC.md](PROJECT_SPEC.md) defines product requirements, [ARCHITECTURE.md](ARCHITECTURE.md) proposes the architecture, and [docs/decisions.md](docs/decisions.md) records accepted choices. This roadmap defines independently reviewable implementation units and tracks progress. Setups A–C and local Specs 01–03 are complete; public product flows remain unimplemented.
 
 ## Current and next work
 
-**Current:** Spec 01 — Display stored dish cards is complete locally. The public preview still exposes only the minimal site and health API; no recommendation feature or real sign-in is complete.
+**Current:** Spec 03 — Select a Carmel location is complete locally on 2026-09-20. The approved project-defined central Carmel polygon is an operational catalog boundary, not an official district boundary. The public preview still exposes only the minimal site and health API; no radius filtering, recommendation feature, or real sign-in is complete.
 
-**Next ready work:** Specs 02, 03, and 06 may begin from Spec 01 by their explicit dependencies. Spec 12 may begin from Setup C's public URLs, but must verify a real callback and session. The catalog release gate remains unmet.
+**Next ready work:** Specs 04 and 06 may begin from their completed dependencies. Spec 12 may begin from Setup C's public URLs, but must verify a real callback and session. The catalog release gate remains unmet.
 
 This revision replaces the previous 21-spec roadmap with the 31 single-feature specs approved in conversation. These are the authoritative feature IDs; product acceptance-criterion numbers are separate. Setups B and C have local and minimal public infrastructure, and Spec 01 is a local development view. Resolve historical references through the migration table below. Do not reset completed setup work.
 
@@ -17,7 +17,7 @@ This revision replaces the previous 21-spec roadmap with the 31 single-feature s
 | Setup C | Free-hosting verification | Complete: public preview/API, no-card Hobby deployment, Google External production publication; real sign-in is Spec 12 |
 | Spec 01 | Display stored dish cards | Complete locally: reviewed sample preview, synthetic tests, read-only API, production route gate verified |
 | Spec 02 | Open restaurant information | Complete locally on 2026-09-17: ID-based restaurant details endpoint, accessible card panel, safe website/location links, deterministic backend and browser tests |
-| Spec 03 | Select a Carmel location | Not started |
+| Spec 03 | Select a Carmel location | Complete locally on 2026-09-20: approved operational coverage polygon, configurable presets, backend distances, bounded guest session state, deterministic tests, and real local smoke check |
 | Spec 04 | Select a search radius | Not started |
 | Spec 05 | Complete taste onboarding | Not started |
 | Spec 06 | Exclude unavailable catalog offerings | Not started |
@@ -144,6 +144,8 @@ This revision replaces the previous 21-spec roadmap with the 31 single-feature s
 **Acceptance criteria:** Verify accepted reference-point coordinates against reviewed evidence. Use configured coverage/preset IDs with the default 3-mile radius. No geolocation permission or address API is needed; reject unsupported locations and avoid precise location history.
 
 **Tests:** Known coordinate distances, changed origin, unsupported IDs, approximate labels, operation without geolocation, and additional-city configuration.
+
+**Verification (2026-09-20):** The unlinked disposable database stored the `central-carmel` Polygon and the reviewed loader restored six factual offerings. All 22 backend tests passed, including configuration, haversine, API, production-gate, loader, read-only and second-city checks. TypeScript and the webpack production build passed; production `/dev/dishes` returned 404. All 15 Playwright checks passed for location selection, session restore/corruption/storage failure, no geolocation call, changed-origin races, errors/retry, existing cards/details, keyboard operation and both desktop viewports. A real local browser flow rendered six stored cards without overflow: three Josephine distances stayed unknown, while three Woody's cards changed from 0.3 miles at Midtown to 0.0 miles at Arts & Design District. No radius filtering, recommendation behavior, or public product route was added.
 
 ## Spec 04 — Select a search radius
 
