@@ -16,7 +16,7 @@ This revision replaces the previous 21-spec roadmap with the 31 single-feature s
 | Setup B | Local application setup | Complete: local health flow and disposable database verified |
 | Setup C | Free-hosting verification | Complete: public preview/API, no-card Hobby deployment, Google External production publication; real sign-in is Spec 12 |
 | Spec 01 | Display stored dish cards | Complete locally: reviewed sample preview, synthetic tests, read-only API, production route gate verified |
-| Spec 02 | Open restaurant information | Not started |
+| Spec 02 | Open restaurant information | Complete locally on 2026-09-17: ID-based restaurant details endpoint, accessible card panel, safe website/location links, deterministic backend and browser tests |
 | Spec 03 | Select a Carmel location | Not started |
 | Spec 04 | Select a search radius | Not started |
 | Spec 05 | Complete taste onboarding | Not started |

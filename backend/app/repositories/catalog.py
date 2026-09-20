@@ -9,6 +9,7 @@ from psycopg.rows import dict_row
 
 
 MAX_PREVIEW_DISHES = 50
+MAX_RESTAURANT_ID_LENGTH = 100
 
 
 def safe_https_url(value: str | None) -> str | None:
@@ -23,6 +24,12 @@ def safe_https_url(value: str | None) -> str | None:
     if any(character.isspace() for character in value):
         return None
     return value
+
+
+def _location_url(latitude: float | None, longitude: float | None) -> str | None:
+    if latitude is None or longitude is None:
+        return None
+    return f"https://www.openstreetmap.org/?mlat={latitude:.6f}&mlon={longitude:.6f}#map=18/{latitude:.6f}/{longitude:.6f}"
 
 
 def _price(amount: Decimal | None, currency: str | None) -> dict[str, str] | None:
@@ -107,3 +114,39 @@ def list_dishes() -> list[dict]:
             {key: attribute[key] for key in ("kind", "value", "provenance")}
         )
     return [by_id[row["id"]] for row in rows]
+
+
+def get_restaurant(restaurant_id: str) -> dict | None:
+    if not restaurant_id or len(restaurant_id) > MAX_RESTAURANT_ID_LENGTH:
+        raise ValueError("Invalid restaurant ID")
+
+    database_url = os.getenv("CATALOG_DATABASE_URL")
+    if not database_url:
+        raise RuntimeError("CATALOG_DATABASE_URL is not configured")
+
+    with psycopg.connect(database_url, row_factory=dict_row, connect_timeout=3) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                select id, name, address, cuisine_tags, website_url, source_url,
+                       retrieved_at, latitude, longitude
+                  from catalog_restaurants
+                 where id = %s
+                 limit 1
+                """,
+                (restaurant_id,),
+            )
+            row = cursor.fetchone()
+
+    if row is None:
+        return None
+    return {
+        "id": row["id"],
+        "name": row["name"],
+        "address": row["address"],
+        "cuisine_tags": row["cuisine_tags"] or [],
+        "website_url": safe_https_url(row["website_url"]),
+        "source_url": safe_https_url(row["source_url"]),
+        "retrieved_at": row["retrieved_at"],
+        "location_url": _location_url(row["latitude"], row["longitude"]),
+    }
