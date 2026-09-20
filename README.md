@@ -79,7 +79,7 @@ set +a
 uv run --locked python scripts/load_reviewed_sample.py
 ```
 
-The reader setup creates ignored `backend/.env.local` with a random read-only password and local test URL. The sample loader replaces the local catalog with only the six factual offerings in `data/samples/carmel_offerings.json`; it does not fetch websites. Josephine's coordinates and the central Carmel extent remain unknown in storage. Both the loader and integration tests change catalog tables, so run them only against the disposable local instance. Never use these commands with a hosted database.
+The reader setup creates ignored `backend/.env.local` with a random read-only password and local test URL. The sample loader replaces the local catalog with only the six factual offerings in `data/samples/carmel_offerings.json`; it does not fetch websites. It loads the reviewed operational coverage polygon from `data/coverage/carmel.json`; Josephine's coordinates remain unknown. Both the loader and integration tests change catalog tables, so run them only against the disposable local instance. Never use these commands with a hosted database.
 
 Start the API in one terminal from `backend/`:
 
@@ -120,3 +120,11 @@ The integration tests reload the synthetic catalog and require the local databas
 Each local dish card has a **Restaurant details** action. It reads `GET /api/dev/restaurants/{restaurant_id}` from the stored catalog and shows the known address, cuisine, source metadata, safe restaurant website, and a coordinate-based OpenStreetMap link when coordinates are present. Missing fields remain explicitly unknown or unavailable. The panel is keyboard accessible and does not claim live hours, availability, or current menu facts. Restaurant details are local-only and are not included in the public preview.
 
 Focused verification uses `uv run --locked pytest`, `npm run typecheck`, `npm run build`, and `npm run test:e2e`. The browser tests mock both catalog endpoints and cover keyboard open/close, safe links, missing fields, loading/error/retry behavior, and 1280×800 / 1440×900 layouts.
+
+## Spec 03 local Carmel location selection
+
+The local dish preview offers manual Midtown and Arts & Design District presets above the cards. The browser sends only the configured preset ID; FastAPI resolves the checked-in approximate origin and calculates distances to stored restaurant coordinates. Known values are labeled approximate, and restaurants without verified coordinates remain unknown. Changing the preset does not filter, reorder, or rank cards; radius eligibility belongs to Spec 04.
+
+The current choice and default 3-mile context are stored in versioned session storage as IDs and an allowed radius only. Raw coordinates and location history are not stored, and the selector continues in page memory if browser storage is unavailable. Browser geolocation and address APIs are never requested. The operational `central-carmel` polygon in `data/coverage/carmel.json` is a project catalog boundary, not an official district or municipal boundary.
+
+The local-only API routes are `GET /api/dev/locations` and `GET /api/dev/locations/{preset_id}/distances`; both remain absent from the deployed preview. Focused verification uses the existing backend, typecheck, build, and Playwright commands. Tests cover configuration validation, known and unknown coordinates, changed origins, session restore/fallback, no geolocation calls, recoverable failures, second-city configuration, and desktop layouts.

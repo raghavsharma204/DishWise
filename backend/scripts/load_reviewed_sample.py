@@ -9,12 +9,19 @@ import json
 import os
 from decimal import Decimal
 from pathlib import Path
+import sys
 from urllib.parse import urlsplit
 
 import psycopg
 
-
 ROOT = Path(__file__).resolve().parents[2]
+BACKEND_ROOT = ROOT / "backend"
+if str(BACKEND_ROOT) not in sys.path:
+    sys.path.insert(0, str(BACKEND_ROOT))
+
+from app.location import load_location_config
+
+
 SAMPLE_PATH = ROOT / "data" / "samples" / "carmel_offerings.json"
 AUDIT_PATH = ROOT / "data" / "source_audit.csv"
 
@@ -29,6 +36,7 @@ def local_admin_url() -> str:
 
 def main() -> None:
     sample = json.loads(SAMPLE_PATH.read_text())
+    location = load_location_config()
     if sample["status"] != "reviewed_factual_sample_not_launch_catalog":
         raise SystemExit("Unexpected sample status")
     with AUDIT_PATH.open(newline="") as audit_file:
@@ -45,11 +53,11 @@ def main() -> None:
         )
         connection.execute(
             "insert into catalog_cities (id, name, state_code, country_code) values (%s, %s, %s, %s)",
-            ("carmel-in", "Carmel", "IN", "US"),
+            (location.city_id, location.city_name, location.state_code, location.country_code),
         )
         connection.execute(
-            "insert into catalog_coverage_areas (id, city_id, name, boundary_geojson) values (%s, %s, %s, null)",
-            ("sample-central-carmel", "carmel-in", "Central Carmel sample; extent unverified"),
+            "insert into catalog_coverage_areas (id, city_id, name, boundary_geojson) values (%s, %s, %s, %s)",
+            (location.coverage_id, location.city_id, location.coverage_name, json.dumps(location.boundary_geojson)),
         )
         for restaurant_id in sorted(restaurants):
             row = audit[restaurant_id]
@@ -60,10 +68,11 @@ def main() -> None:
                 """insert into catalog_restaurants
                    (id, city_id, coverage_id, name, latitude, longitude,
                     website_url, menu_url, source_id, source_url, retrieved_at)
-                   values (%s, 'carmel-in', 'sample-central-carmel', %s, %s, %s,
+                   values (%s, %s, %s, %s, %s, %s,
                            %s, %s, %s, %s, %s)""",
                 (
-                    restaurant_id, row["restaurant_name"], latitude, longitude,
+                    restaurant_id, location.city_id, location.coverage_id,
+                    row["restaurant_name"], latitude, longitude,
                     row["restaurant_url"], row["menu_url"], source_id,
                     row["osm_record_url"] or row["restaurant_url"],
                     sample["audit_date_utc"],

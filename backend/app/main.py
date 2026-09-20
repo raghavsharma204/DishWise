@@ -21,9 +21,11 @@ def create_app(*, local_catalog: bool | None = None) -> FastAPI:
         )
     if local_catalog:
         from app.routes.dishes import router as dishes_router
+        from app.routes.locations import router as locations_router
         from app.routes.restaurants import router as restaurants_router
 
         application.include_router(dishes_router)
+        application.include_router(locations_router)
         application.include_router(restaurants_router)
 
     @application.get("/health")

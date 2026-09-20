@@ -1,5 +1,20 @@
 import { expect, Page, test } from "@playwright/test";
 
+const locationOptions = {
+  city_id: "carmel-in",
+  coverage_id: "central-carmel",
+  default_radius_miles: 3,
+  approximate: true,
+  items: [
+    { id: "midtown", label: "Midtown" },
+    { id: "arts-design-district", label: "Arts & Design District" },
+  ],
+};
+
+test.beforeEach(async ({ page }) => {
+  await page.route("**/api/dev/locations", (route) => route.fulfill({ json: locationOptions }));
+});
+
 const dish = {
   id: "test-bistro:noodles",
   restaurant: { id: "test-bistro", name: "Test Bistro" },

@@ -7,7 +7,7 @@ from urllib.parse import urlsplit
 import psycopg
 import pytest
 
-from app.repositories.catalog import list_dishes
+from app.repositories.catalog import list_dishes, list_preview_restaurant_coordinates
 from scripts.load_reviewed_sample import main as load_reviewed_sample
 
 
@@ -39,6 +39,9 @@ def test_fixture_round_trip_and_second_city() -> None:
     assert variant_dish["price"] is None
     assert [variant["label"] for variant in variant_dish["variants"]] == ["Large", "Small"]
     assert next(dish for dish in dishes if dish["id"] == "test-bistro:noodles")["attributes"][0]["provenance"] == "inferred"
+    assert [restaurant["restaurant_id"] for restaurant in list_preview_restaurant_coordinates()] == [
+        "test-bistro", "test-cafe", "test-second-city"
+    ]
 
 
 def test_foreign_keys_and_read_only_role() -> None:
@@ -88,6 +91,11 @@ def test_reviewed_sample_loads_only_recorded_facts() -> None:
                 "select latitude, longitude from catalog_restaurants where id = 'josephine'"
             ).fetchone()
             assert coords == (None, None)
+            coverage = admin.execute(
+                "select id, boundary_geojson from catalog_coverage_areas where city_id = 'carmel-in'"
+            ).fetchone()
+            assert coverage[0] == "central-carmel"
+            assert coverage[1]["type"] == "Polygon"
     finally:
         with psycopg.connect(admin_url) as admin:
             admin.execute(FIXTURE_SQL.read_text())

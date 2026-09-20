@@ -1,0 +1,69 @@
+{
+  "city": {
+    "id": "carmel-in",
+    "name": "Carmel",
+    "state_code": "IN",
+    "country_code": "US"
+  },
+  "coverage": {
+    "id": "central-carmel",
+    "name": "Central Carmel: Midtown and Arts & Design District",
+    "classification": "project_operational_boundary",
+    "boundary_geojson": {
+      "type": "Polygon",
+      "coordinates": [[
+        [-86.135, 39.965],
+        [-86.119, 39.965],
+        [-86.119, 39.99],
+        [-86.135, 39.99],
+        [-86.135, 39.965]
+      ]]
+    },
+    "sources": [
+      {
+        "url": "https://www.carmel.in.gov/440/Midtown-Plaza",
+        "reviewed_at": "2026-09-20",
+        "note": "City description identifies Midtown between the Arts & Design District and City Center."
+      },
+      {
+        "url": "https://www.carmel.in.gov/513/Arts-Design-District",
+        "reviewed_at": "2026-09-20",
+        "note": "City description identifies the Arts & Design District in Old Town Carmel."
+      }
+    ]
+  },
+  "default_radius_miles": 3,
+  "presets": [
+    {
+      "id": "midtown",
+      "label": "Midtown",
+      "latitude": 39.9757552,
+      "longitude": -86.1289362,
+      "approximate": true,
+      "coordinate_method": "node",
+      "source": {
+        "url": "https://www.openstreetmap.org/node/10085774350",
+        "osm_type": "node",
+        "osm_id": 10085774350,
+        "source_timestamp": "2022-10-08T23:35:54Z",
+        "reviewed_at": "2026-09-20"
+      }
+    },
+    {
+      "id": "arts-design-district",
+      "label": "Arts & Design District",
+      "latitude": 39.9786375,
+      "longitude": -86.1259628,
+      "approximate": true,
+      "coordinate_method": "geometry_center",
+      "source": {
+        "url": "https://www.openstreetmap.org/way/1101349116",
+        "osm_type": "way",
+        "osm_id": 1101349116,
+        "source_timestamp": "2022-10-05T23:47:35Z",
+        "reviewed_at": "2026-09-20"
+      }
+    }
+  ],
+  "attribution": "OpenStreetMap contributors, ODbL 1.0; https://www.openstreetmap.org/copyright"
+}

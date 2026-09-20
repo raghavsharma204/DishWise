@@ -1,6 +1,6 @@
 # Dish Recommendation App — Project Specification
 
-Status: V1 scope with Setups A–C and local Spec 01 complete and decisions recorded in `docs/decisions.md`. Setup C deployed only a public preview and FastAPI health check, and the Google External OAuth app is in production without a card. Spec 01 can display the six reviewed factual sample offerings locally; tests use synthetic fixtures. No recommendation flow or real sign-in is implemented. The sample remains below the public launch gate.
+Status: V1 scope with Setups A–C and local Specs 01–03 complete and decisions recorded in `docs/decisions.md`. Setup C deployed only a public preview and FastAPI health check, and the Google External OAuth app is in production without a card. The local preview can display the six reviewed factual sample offerings, open restaurant details, and select either configured Carmel origin to show approximate stored-coordinate distances; tests use synthetic fixtures. No radius filtering, recommendation flow, or real sign-in is implemented. The sample remains below the public launch gate.
 
 ## Problem statement
 
@@ -156,12 +156,11 @@ These criteria establish functional behavior. The release target is five reviewe
 2. Can Spec 12 complete a real public Google/Supabase sign-in and callback with the final URLs? Setup C confirmed External production publication without billing, but no session flow has been tested. Resolve any future scope/domain verification requirement before public auth release.
 3. What existing hardware is available for local enrichment, and which embedding model fits it?
 4. Will the later product API and its dependencies fit the selected host's current free limits and latency target? Setup C verified only the lightweight health deployment.
-5. Confirm exact preset coordinates and configured central Carmel coverage in Spec 03 against reviewed geographic evidence. Manual presets and 1/3/5-mile radii are accepted.
-6. Dietary filters are deferred from V1. What evidence and unknown-data policy would a later dietary-filter feature require?
-7. Price is a ranking preference only in V1; whether a future hard cap is useful remains a later decision.
-8. What initial weights apply to likes, dislikes, saves, clicks, novelty, and distance? Are dislikes treated as persistent exclusion of the exact offering or only a ranking penalty?
-9. Recheck reviewed offerings every 30 days and withhold older ones until verified. The exact operator schedule and source-specific exceptions will be confirmed during ingestion work.
-10. The five-person pilot and p95 warm-response target are accepted. A calendar completion date remains unset until pilot recruitment.
+5. Dietary filters are deferred from V1. What evidence and unknown-data policy would a later dietary-filter feature require?
+6. Price is a ranking preference only in V1; whether a future hard cap is useful remains a later decision.
+7. What initial weights apply to likes, dislikes, saves, clicks, novelty, and distance? Are dislikes treated as persistent exclusion of the exact offering or only a ranking penalty?
+8. Recheck reviewed offerings every 30 days and withhold older ones until verified. The exact operator schedule and source-specific exceptions will be confirmed during ingestion work.
+9. The five-person pilot and p95 warm-response target are accepted. A calendar completion date remains unset until pilot recruitment.
 
 ## Feasibility references
 

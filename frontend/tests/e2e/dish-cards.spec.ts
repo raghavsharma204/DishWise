@@ -1,5 +1,20 @@
 import { expect, test } from "@playwright/test";
 
+const locationOptions = {
+  city_id: "carmel-in",
+  coverage_id: "central-carmel",
+  default_radius_miles: 3,
+  approximate: true,
+  items: [
+    { id: "midtown", label: "Midtown" },
+    { id: "arts-design-district", label: "Arts & Design District" },
+  ],
+};
+
+test.beforeEach(async ({ page }) => {
+  await page.route("**/api/dev/locations", (route) => route.fulfill({ json: locationOptions }));
+});
+
 const dish = {
   id: "test-cafe:noodles",
   restaurant: { id: "test-cafe", name: "Test Cafe" },
@@ -59,6 +74,6 @@ test("shows loading and a safe source link", async ({ page }) => {
     await route.fulfill({ json: { items: [{ ...dish, source_url: "https://example.com/menu" }] } });
   });
   await page.goto("/dev/dishes");
-  await expect(page.getByRole("status", { name: "" })).toContainText("Loading stored dishes");
+  await expect(page.getByText("Loading stored dishes…")).toBeVisible();
   await expect(page.getByRole("link", { name: "View menu source" })).toHaveAttribute("href", "https://example.com/menu");
 });
